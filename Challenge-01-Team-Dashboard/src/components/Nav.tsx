@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { daysLeft } from "@/lib/types";
 import ThemeToggle from "./ThemeToggle";
+import SignalBar from "./SignalBar";
 
 interface Item { key: string; href: string }
 
@@ -108,6 +109,7 @@ export default function Nav({
           </span>
           <span className="lbl-faint val" style={{ fontSize: 10 }}>{clock}</span>
           <span className="lbl val" style={{ fontSize: 10, color: urgent ? "var(--hot)" : "var(--faint)" }}>D−{left ?? "--"}</span>
+          <SignalBar />
           <ThemeToggle />
         </div>
       </div>

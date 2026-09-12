@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Nav from "@/components/Nav";
+import Ceremony from "@/components/Ceremony";
+import Chat from "@/components/Chat";
 import type { Profile } from "@/lib/types";
 
 const NAV = [
@@ -40,6 +42,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <div style={{ minHeight: "100vh", background: "var(--void)" }}>
       <Nav items={items} name={profile.full_name} role={role} selfId={profile.id} />
       <main style={{ padding: "20px 18px 70px", maxWidth: 1640, margin: "0 auto" }}>{children}</main>
+      <Ceremony userId={profile.id} />
+      <Chat userId={profile.id} />
     </div>
   );
 }
