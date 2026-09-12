@@ -62,28 +62,29 @@ export default function TeamHomeScreen() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 40 }}>
       {/* ── wordmark ─────────────────────────────────────────────── */}
-      <section style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14, padding: "38px 0 6px" }}>
-        <img src="/cipher-shield.png" alt="" style={{ width: 112, height: 112, objectFit: "contain" }} />
-        <div style={{ fontSize: "clamp(40px, 9vw, 68px)", fontWeight: 800, letterSpacing: ".08em", lineHeight: 1 }}>
+      <section style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, padding: "38px 0 6px" }}>
+        <img src="/cipher-shield.png" alt="" className="home-shield"
+          style={{ width: "clamp(140px, 22vw, 190px)", height: "clamp(140px, 22vw, 190px)", objectFit: "contain" }} />
+        <div className="home-wordmark-text" style={{ fontSize: "clamp(40px, 9vw, 68px)", fontWeight: 800, letterSpacing: ".08em", lineHeight: 1 }}>
           CIPHER
         </div>
-        <div className="lbl-faint" style={{ fontSize: 10, letterSpacing: ".24em" }}>
+        <div className="lbl-faint home-wordmark-sub" style={{ fontSize: 10, letterSpacing: ".24em" }}>
           AARVAK · TECH SPRINT JOURNEY 2026
         </div>
       </section>
 
       {leads.length > 0 && (
-        <TeamRow title="LEADS" people={leads} />
+        <TeamRow title="LEADS" people={leads} rowDelay={0} />
       )}
 
-      <TeamRow title="CREW" people={members} />
+      <TeamRow title="CREW" people={members} rowDelay={leads.length > 0 ? 90 : 0} />
     </div>
   );
 }
 
-function TeamRow({ title, people }: { title: string; people: Profile[] }) {
+function TeamRow({ title, people, rowDelay = 0 }: { title: string; people: Profile[]; rowDelay?: number }) {
   return (
-    <section style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <section className="home-row" style={{ display: "flex", flexDirection: "column", gap: 16, animationDelay: `${rowDelay}ms` }}>
       <div className="lbl-hot" style={{ fontSize: 10, textAlign: "center" }}>{title}</div>
       <div style={{
         display: "flex",
@@ -91,7 +92,7 @@ function TeamRow({ title, people }: { title: string; people: Profile[] }) {
         justifyContent: "center",
         gap: 18,
       }}>
-        {people.map((p) => {
+        {people.map((p, idx) => {
           const name = (p.full_name ?? "").trim();
           const div = divisionOf(p.department);
           const pending = photoPending(p.id, name);
@@ -102,11 +103,12 @@ function TeamRow({ title, people }: { title: string; people: Profile[] }) {
             <Link
               key={p.id}
               href={`/dashboard/profile/${p.id}`}
-              className="panel"
+              className="panel home-card"
               style={{
                 display: "flex", flexDirection: "column", overflow: "hidden",
                 textDecoration: "none", color: "inherit",
                 width: 150, flex: "0 0 150px",
+                animationDelay: `${rowDelay + idx * 45}ms`,
               }}
             >
               <div className={dithered && color ? "home-photo" : undefined} style={{

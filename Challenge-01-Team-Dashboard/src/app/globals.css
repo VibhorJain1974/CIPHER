@@ -604,3 +604,44 @@ html[data-theme="light"] { color-scheme: light; }
 @media (prefers-reduced-motion: reduce) {
   .home-photo-color { transition: none; }
 }
+
+/* team home entrance: the shield settles in first with a slow breathing
+   glow (this is the one screen with no rank or points to look at, so the
+   mark itself carries a little life), the wordmark follows a beat behind,
+   then each row and its cards deal in in sequence rather than the whole
+   screen appearing at once */
+@keyframes homeWordmarkIn {
+  from { opacity: 0; transform: translateY(-14px) scale(.92); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes homeShieldGlow {
+  0%, 100% { filter: drop-shadow(0 0 0 transparent); }
+  50%      { filter: drop-shadow(0 0 16px var(--hot)); }
+}
+@keyframes homeRowIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes homeCardIn {
+  from { opacity: 0; transform: translateY(14px) scale(.96); }
+  to   { opacity: 1; transform: none; }
+}
+.home-shield {
+  animation:
+    homeWordmarkIn .5s cubic-bezier(.2,.9,.25,1) both,
+    homeShieldGlow 3.8s ease-in-out .6s infinite;
+}
+.home-wordmark-text { animation: homeWordmarkIn .55s cubic-bezier(.2,.9,.25,1) .08s both; }
+.home-wordmark-sub  { animation: homeWordmarkIn .55s cubic-bezier(.2,.9,.25,1) .16s both; }
+.home-row  { animation: homeRowIn .5s cubic-bezier(.2,.9,.25,1) both; }
+.home-card {
+  animation: homeCardIn .45s cubic-bezier(.2,.9,.25,1) both;
+  transition: transform .18s ease;
+}
+.home-card:hover { transform: translateY(-3px); }
+@media (prefers-reduced-motion: reduce) {
+  .home-shield, .home-wordmark-text, .home-wordmark-sub, .home-row, .home-card {
+    animation: none;
+  }
+  .home-card:hover { transform: none; }
+}
