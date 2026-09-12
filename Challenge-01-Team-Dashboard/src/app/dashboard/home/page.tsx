@@ -63,7 +63,7 @@ export default function TeamHomeScreen() {
     <div style={{ display: "flex", flexDirection: "column", gap: 40 }}>
       {/* ── wordmark ─────────────────────────────────────────────── */}
       <section style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14, padding: "38px 0 6px" }}>
-        <img src="/cipher-shield.png" alt="" style={{ width: 84, height: 84, objectFit: "contain" }} />
+        <img src="/cipher-shield.png" alt="" style={{ width: 112, height: 112, objectFit: "contain" }} />
         <div style={{ fontSize: "clamp(40px, 9vw, 68px)", fontWeight: 800, letterSpacing: ".08em", lineHeight: 1 }}>
           CIPHER
         </div>
@@ -86,8 +86,9 @@ function TeamRow({ title, people }: { title: string; people: Profile[] }) {
     <section style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <div className="lbl-hot" style={{ fontSize: 10 }}>{title}</div>
       <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
+        display: "flex",
+        flexWrap: "wrap",
+        justifyContent: "center",
         gap: 18,
       }}>
         {people.map((p) => {
@@ -103,6 +104,7 @@ function TeamRow({ title, people }: { title: string; people: Profile[] }) {
               style={{
                 display: "flex", flexDirection: "column", overflow: "hidden",
                 textDecoration: "none", color: "inherit",
+                width: 150, flex: "0 0 150px",
               }}
             >
               <div style={{
