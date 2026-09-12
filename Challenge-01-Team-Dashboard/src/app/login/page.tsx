@@ -18,6 +18,10 @@ export default function EntryScreen() {
   const [note, setNote] = useState("");
   const [opening, setOpening] = useState(false);
 
+  // the board is prefetched while they type, so the doors are not left
+  // standing open on an empty screen while Next fetches the route
+  useEffect(() => { router.prefetch("/dashboard/leaderboard"); }, [router]);
+
   // the callback bounces here after a confirm link is spent
   useEffect(() => {
     if (new URLSearchParams(window.location.search).has("confirmed")) {
@@ -62,7 +66,10 @@ export default function EntryScreen() {
 
   return (
     <main style={{ minHeight: "100vh", display: "grid", placeItems: "center", padding: 24, position: "relative" }}>
-      <DecryptField />
+      <div style={{ opacity: opening ? 0 : 1, transition: "opacity .3s ease" }}>
+        <DecryptField />
+      </div>
+      {opening && <div className="vault-void" />}
       <VaultDoor open={opening} />
       <div style={{ position: "fixed", top: 16, right: 18, zIndex: 3 }}><ThemeToggle /></div>
       <div className="glass-card" style={{ width: "100%", maxWidth: 340, position: "relative", zIndex: 60,
