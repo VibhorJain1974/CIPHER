@@ -364,23 +364,44 @@ html[data-theme="light"] { color-scheme: light; }
 
 .cer-field { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 .cer-bit {
-  position: absolute; left: 50%; top: 50%; font-size: 12px; font-weight: 600;
+  position: absolute; left: 50%; top: 50%; font-size: 13px; font-weight: 600;
   font-family: 'IBM Plex Mono', monospace; opacity: 0;
   transform: translate(var(--fx), var(--fy));
-  animation: cerConverge 1.5s cubic-bezier(.16,.9,.24,1) forwards;
+  animation: cerConverge 1.55s cubic-bezier(.16,.86,.2,1) forwards;
 }
+/* green, orange, red, bone: one per incoming stream */
+.cer-c0 { color: #3ddc84; }
+.cer-c1 { color: #ff8a1f; }
+.cer-c2 { color: #ff3b2f; }
+.cer-c3 { color: #f2efe6; }
+
 @keyframes cerConverge {
-  0%   { opacity: 0; transform: translate(var(--fx), var(--fy)) scale(1.5) }
-  18%  { opacity: 1 }
-  78%  { opacity: .95; transform: translate(var(--tx), var(--ty)) scale(.6) }
-  100% { opacity: 0; transform: translate(0,0) scale(.2) }
+  0%   { opacity: 0; transform: translate(var(--fx), var(--fy)) rotate(0deg) scale(1.4) }
+  16%  { opacity: 1 }
+  70%  { opacity: 1; transform: translate(var(--tx), var(--ty)) rotate(var(--spin)) scale(.85) }
+  100% { opacity: 0; transform: translate(0,0) rotate(var(--spin)) scale(.3) }
+}
+
+/* the gathered core, spinning for a beat before it resolves */
+.cer-ball {
+  position: absolute; left: 50%; top: 50%; width: 132px; height: 132px;
+  margin: -66px 0 0 -66px; border-radius: 50%; opacity: 0;
+  background: conic-gradient(from 0deg, #3ddc84, #ff8a1f, #ff3b2f, #f2efe6, #3ddc84);
+  filter: blur(15px);
+  animation: cerBall 1.5s ease-in .55s forwards;
+}
+@keyframes cerBall {
+  0%   { opacity: 0; transform: rotate(0deg) scale(.3) }
+  38%  { opacity: .85; transform: rotate(400deg) scale(1) }
+  100% { opacity: 0; transform: rotate(760deg) scale(1.5) }
 }
 
 .cer-core { position: relative; text-align: center; padding: 24px; max-width: 460px; }
-.cer-medal { display: grid; place-items: center; opacity: 0; animation: cerStrike .8s cubic-bezier(.2,1.5,.3,1) 1.28s forwards; }
-@keyframes cerStrike {
-  0%   { opacity: 0; transform: scale(2.6) rotate(-14deg); filter: brightness(3) }
-  45%  { opacity: 1; transform: scale(.92) rotate(2deg); filter: brightness(1.5) }
+.cer-medal { display: grid; place-items: center; opacity: 0; animation: cerResolve 1.15s cubic-bezier(.2,.8,.2,1) 1.35s forwards; }
+/* reverse fade: it arrives out of the blur rather than being thrown at you */
+@keyframes cerResolve {
+  0%   { opacity: 0; transform: scale(.42); filter: blur(16px) brightness(2.4) }
+  55%  { opacity: 1; transform: scale(1.03); filter: blur(2px) brightness(1.3) }
   100% { opacity: 1; transform: none; filter: none }
 }
 .cer-kicker, .cer-name, .cer-blurb, .cer-rar { opacity: 0; animation: cerUp .5s ease forwards; }
@@ -400,6 +421,7 @@ html[data-theme="light"] { color-scheme: light; }
 
 @media (prefers-reduced-motion: reduce) {
   .cer-field { display: none }
+  .cer-ball { display: none }
   .cer-medal, .cer-kicker, .cer-name, .cer-blurb, .cer-rar, .cer-skip { animation: none; opacity: 1 }
 }
 
@@ -465,3 +487,7 @@ html[data-theme="light"] { color-scheme: light; }
 @keyframes plateScan { from { top: -18% } to { top: 104% } }
 .fig-plate-scan { top: -18%; animation: plateScan 5.4s linear infinite; pointer-events: none; }
 @media (prefers-reduced-motion: reduce) { .fig-plate-scan { display: none } }
+
+.chat-x { border: none; background: transparent; color: var(--dim); cursor: pointer;
+  font-size: 17px; line-height: 1; padding: 0 4px; font-family: inherit; }
+.chat-x:hover { color: var(--hot); }

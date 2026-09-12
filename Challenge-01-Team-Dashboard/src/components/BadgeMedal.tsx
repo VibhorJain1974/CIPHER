@@ -14,7 +14,7 @@ import BadgeGlyph from "./BadgeGlyph";
 
 /** Marks with rendered art in /public/badges. Add a code here when its PNG lands. */
 const ART = new Set([
-  "FRST", "HEVY", "POLY", "RLNT", "OPEN",
+  "FRST", "STK7", "HEVY", "POLY", "RLNT", "OPEN",
   "SPTL", "ARCV", "CENT", "KILL", "STK30", "APEX",
 ]);
 
@@ -39,13 +39,19 @@ export default function BadgeMedal({
       return [c + Math.cos(ang) * r, c + Math.sin(ang) * r].map((n) => n.toFixed(2)).join(",");
     }).join(" ");
 
-  /** The ring that closes as a locked mark gets nearer. Shared by both paths. */
+  /**
+   * How close a locked mark is, drawn as an arc OUTSIDE the plate rather than
+   * across it. A dashed hexagon read as a broken plate edge, which is why the
+   * medals looked mis-cut.
+   */
   const ring = !earned && progress > 0 ? (
     <svg viewBox={`0 0 ${S} ${S}`} width={size} height={size}
-      style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-      <polygon points={hex(45)} fill="none" stroke="#8a3010" strokeWidth="2.6"
-        strokeDasharray={`${progress * 270} 270`}
-        transform={`rotate(-90 ${c} ${c})`} opacity="0.85" />
+      style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "visible" }}>
+      <circle cx={c} cy={c} r={47} fill="none" stroke="var(--line)" strokeWidth="2" opacity="0.5" />
+      <circle cx={c} cy={c} r={47} fill="none" stroke="#8a3010" strokeWidth="2"
+        strokeLinecap="butt" pathLength={100}
+        strokeDasharray={`${Math.max(1, progress * 100)} 100`}
+        transform={`rotate(-90 ${c} ${c})`} />
     </svg>
   ) : null;
 
@@ -129,12 +135,15 @@ export default function BadgeMedal({
           ))}
         </g>
 
-        {!earned && progress > 0 && (
-          <polygon points={hex(45)} fill="none" stroke="#8a3010" strokeWidth="2.6"
-            strokeDasharray={`${progress * 270} 270`}
-            transform={`rotate(-90 ${c} ${c})`} opacity="0.85" />
-        )}
       </g>
+      {!earned && progress > 0 && (
+        <>
+          <circle cx={c} cy={c} r={47} fill="none" stroke="var(--line)" strokeWidth="2" opacity="0.5" />
+          <circle cx={c} cy={c} r={47} fill="none" stroke="#8a3010" strokeWidth="2"
+            pathLength={100} strokeDasharray={`${Math.max(1, progress * 100)} 100`}
+            transform={`rotate(-90 ${c} ${c})`} />
+        </>
+      )}
     </svg>
   );
 }

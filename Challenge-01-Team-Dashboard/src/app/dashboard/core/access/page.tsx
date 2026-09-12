@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { MemberRole, Profile, RivalTeam } from "@/lib/types";
 import CodeMinter from "@/components/CodeMinter";
+import NodeKiller from "@/components/NodeKiller";
 
 const ROLES: { key: MemberRole; label: string; col: string }[] = [
   { key: "member", label: "MBR",  col: "var(--dimmer)" },
@@ -17,6 +18,7 @@ export default function KeysScreen() {
   const [draft, setDraft] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [selfId, setSelfId] = useState("");
 
   const load = useCallback(async () => {
     const supabase = createClient();
@@ -30,6 +32,9 @@ export default function KeysScreen() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    createClient().auth.getUser().then(({ data }) => setSelfId(data.user?.id ?? ""));
+  }, []);
 
   async function setRole(id: string, role: MemberRole) {
     setBusy(id);
@@ -125,6 +130,11 @@ export default function KeysScreen() {
           </div>
         </div>
       </div>
+      {selfId && (
+        <div style={{ marginTop: 22 }}>
+          <NodeKiller selfId={selfId} />
+        </div>
+      )}
     </div>
   );
 }

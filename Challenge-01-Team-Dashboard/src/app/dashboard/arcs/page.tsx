@@ -22,12 +22,16 @@ export default function ArcsScreen() {
   useEffect(() => {
     const supabase = createClient();
     (async () => {
-      const [{ data: p }, { data: w }, { data: l }] = await Promise.all([
+      const [{ data: p }, { data: w }, { data: l }, { data: who }] = await Promise.all([
         supabase.from("team_progress").select("*").order("total_points", { ascending: false }),
         supabase.from("weekly_yield").select("*"),
         supabase.from("verified_log").select("*").order("achievement_date", { ascending: false }),
+        supabase.from("profiles").select("id, role"),
       ]);
-      setProg((p as TeamProgressRow[]) ?? []);
+      // leads run the board and are not plotted on it
+      const staff = new Set(((who ?? []) as { id: string; role: string }[])
+        .filter((x) => x.role !== "member").map((x) => x.id));
+      setProg(((p as TeamProgressRow[]) ?? []).filter((m) => !staff.has(m.member_id)));
       setWeekly((w as Weekly[]) ?? []);
       setLog((l as LogRow[]) ?? []);
       setLoading(false);

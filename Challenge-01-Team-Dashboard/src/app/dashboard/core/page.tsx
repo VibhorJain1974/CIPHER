@@ -15,6 +15,7 @@ export default function QueueScreen() {
   const [arming, setArming] = useState<Record<string, boolean>>({});
   const [urls, setUrls] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
+  const [opErr, setOpErr] = useState("");
   const [slam, setSlam] = useState<{ pts: number; who: string } | null>(null);
 
   const load = useCallback(async () => {
@@ -57,11 +58,15 @@ export default function QueueScreen() {
     setBusy(r.id);
     const supabase = createClient();
     const { data: u } = await supabase.auth.getUser();
-    await supabase.from("achievements").update({
+    // never swallow this: a rejected write here is the difference between
+    // "points landed" and "nothing happened", and the UI must say which
+    const { error } = await supabase.from("achievements").update({
       status: "verified", points: pts,
       verified_by: u.user?.id, verified_at: new Date().toISOString(),
     }).eq("id", r.id);
     setBusy(null);
+    if (error) { setOpErr(error.message.toUpperCase()); return; }
+    setOpErr("");
     setSlam({ pts, who: r.full_name });
     setTimeout(() => setSlam(null), 1200);
     load();
@@ -72,12 +77,14 @@ export default function QueueScreen() {
     setBusy(r.id);
     const supabase = createClient();
     const { data: u } = await supabase.auth.getUser();
-    await supabase.from("achievements").update({
+    const { error } = await supabase.from("achievements").update({
       status: "rejected",
       rejection_reason: cause[r.id]?.trim() || "NO VALID PROOF",
       verified_by: u.user?.id, verified_at: new Date().toISOString(),
     }).eq("id", r.id);
     setBusy(null);
+    if (error) { setOpErr(error.message.toUpperCase()); return; }
+    setOpErr("");
     load();
   }
 
@@ -87,6 +94,11 @@ export default function QueueScreen() {
 
   return (
     <div style={{ position: "relative" }}>
+      {opErr && (
+        <div className="panel" style={{ padding: "11px 14px", borderColor: "var(--hot)", marginBottom: 12 }}>
+          <span className="lbl" style={{ color: "var(--hot)" }}>WRITE REFUSED · {opErr}</span>
+        </div>
+      )}
       {slam && (
         <div style={{ position: "fixed", inset: 0, zIndex: 90, display: "grid", placeItems: "center", pointerEvents: "none" }}>
           <div className="slam val" style={{ fontSize: 200, fontWeight: 700, color: "var(--hot)", lineHeight: 1 }}>

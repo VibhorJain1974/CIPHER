@@ -25,7 +25,7 @@ const BY_NAME: Record<string, string> = {
 };
 
 /** Members with a full-length render as well as a bust. */
-const FULL = new Set(["vibbhor", "harsh", "ridhi", "tavishi", "anushka"]);
+const FULL = new Set(["vibbhor", "harsh", "kartik", "ridhi", "tavishi", "anushka"]);
 
 function slugFor(id: string, name?: string): string | null {
   const byId = BY_ID[id];

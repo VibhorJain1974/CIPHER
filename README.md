@@ -10,14 +10,29 @@ who built it, and how to run it.
 
 ## Team
 
+**Leads**
+
 | Name | Role | Division |
 | --- | --- | --- |
-| Vibbhor Jain | HR & Operations Head · core | OPS COMMAND |
-| Harsh Gupta | CyberSec Head · core | HEX DIVISION |
-| Kartik Sharma | Member | — |
-| Ridhi Jaiswal | Member | PRISM DIVISION |
-| Tavishi Jain | Member | — |
-| Anushka Arora | Member | — |
+| Vibbhor Jain | HR & Operations Head | OPS COMMAND |
+| Harsh Gupta | CyberSec Head | HEX DIVISION |
+
+**Members**
+
+| Name | Department |
+| --- | --- |
+| Kartik Sharma | Tech |
+| Apurva | Tech |
+| Tavishi Jain | R&D |
+| Ridhi Jaiswal | Design |
+| Ebnay Razi | Event Management |
+| Tanvi | Social Media |
+| Manthan Bhatia | PR |
+| Anushka Arora | PR |
+
+Leads run the board and are not ranked on it. They clear entries, mint enrolment
+codes and read the audit trail; they do not bank points, which is enforced by
+policy rather than by convention.
 
 ## Attribution
 

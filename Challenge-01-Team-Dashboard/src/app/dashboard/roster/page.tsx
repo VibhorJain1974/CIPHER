@@ -45,9 +45,12 @@ export default function CrewScreen() {
   const leads = profiles
     .filter((p) => p.role === "core")
     .sort((a, b) => a.full_name.localeCompare(b.full_name));
-  const leadIds = new Set(leads.map((l) => l.id));
+  const judges = profiles
+    .filter((p) => p.role === "judge")
+    .sort((a, b) => a.full_name.localeCompare(b.full_name));
 
-  const field = prog.filter((m) => !leadIds.has(m.member_id));
+  const staffIds = new Set([...leads, ...judges].map((l) => l.id));
+  const field = prog.filter((m) => !staffIds.has(m.member_id));
   const place = ranks(field.map((m) => Number(m.total_points)));
 
   return (
@@ -67,6 +70,24 @@ export default function CrewScreen() {
           ))}
         </div>
       </section>
+
+      {/* ── observers ─────────────────────────────────────────────── */}
+      {judges.length > 0 && (
+        <section>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
+            <span className="lbl-hot">OBSERVERS // {judges.length}</span>
+            <span className="lbl-faint">READ AND VERIFY · NOT RANKED</span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 14 }}>
+            {judges.map((j) => (
+              <Link key={j.id} href={`/dashboard/profile/${j.id}`} style={{ color: "inherit", display: "block" }}>
+                <AgentCard name={j.full_name} department={j.department || "OBSERVERS"}
+                  role={j.role} locked={j.locked} id={j.id} compact />
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ── field ─────────────────────────────────────────────────── */}
       <section>

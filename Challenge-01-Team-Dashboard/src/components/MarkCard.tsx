@@ -112,10 +112,12 @@ export default function MarkCard({ badge, col, onClose, canReplay }: { badge: Ba
             </div>
           )}
 
-          {canReplay && (
+          {/* a strike can only be replayed by someone who has actually
+              struck it: showing it before it is earned gives the moment away */}
+          {canReplay && on && (
             <button className="btn" style={{ marginTop: 16, width: "100%" }}
               onClick={() => setReplay(true)}>
-              {on ? "REPLAY THE STRIKE" : "PREVIEW THE STRIKE"}
+              REPLAY THE STRIKE
             </button>
           )}
 
@@ -124,7 +126,7 @@ export default function MarkCard({ badge, col, onClose, canReplay }: { badge: Ba
           </div>
         </div>
       </div>
-      {replay && <CeremonyStage badge={badge} preview={!on} onDone={() => setReplay(false)} />}
+      {replay && on && <CeremonyStage badge={badge} onDone={() => setReplay(false)} />}
     </div>
   );
 }

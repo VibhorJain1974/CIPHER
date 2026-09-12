@@ -27,27 +27,33 @@ export default function CeremonyStage({
 
   return (
     <div className={`cer cer-${phase}`} aria-live="polite">
+      {/* Four streams of ones and zeroes spiral in from the four sides and
+          gather into a spinning ball dead centre. The medal then resolves out
+          of it, fading up as the ball fades down. */}
       <div className="cer-field" aria-hidden>
         {Array.from({ length: CELLS }, (_, i) => {
-          const edge = i % 4;
-          const p = ((i * 37) % 100) / 100;
+          const side = i % 4;
+          const t = ((i * 37) % 100) / 100;
           const from =
-            edge === 0 ? { x: `${p * 100 - 50}vw`, y: "-60vh" } :
-            edge === 1 ? { x: "60vw", y: `${p * 100 - 50}vh` } :
-            edge === 2 ? { x: `${p * 100 - 50}vw`, y: "60vh" } :
-                         { x: "-60vw", y: `${p * 100 - 50}vh` };
-          const hue = [0, 22, 42, 190][i % 4];
+            side === 0 ? { x: `${(t - 0.5) * 120}vw`, y: "-62vh" } :
+            side === 1 ? { x: "62vw", y: `${(t - 0.5) * 120}vh` } :
+            side === 2 ? { x: `${(t - 0.5) * 120}vw`, y: "62vh" } :
+                         { x: "-62vw", y: `${(t - 0.5) * 120}vh` };
+          // the ball: every bit lands on a point of a small sphere
+          const ang = (i / CELLS) * Math.PI * 2 * 7;
+          const rad = 26 + (i % 11) * 3.4;
           return (
-            <span key={i} className="cer-bit" style={{
+            <span key={i} className={`cer-bit cer-c${side}`} style={{
               ["--fx" as string]: from.x,
               ["--fy" as string]: from.y,
-              ["--tx" as string]: `${((i * 53) % 40) - 20}px`,
-              ["--ty" as string]: `${((i * 29) % 40) - 20}px`,
-              color: `hsl(${hue} 90% 58%)`,
-              animationDelay: `${(i % 26) * 0.022}s`,
+              ["--tx" as string]: `${Math.cos(ang) * rad}px`,
+              ["--ty" as string]: `${Math.sin(ang) * rad * 0.72}px`,
+              ["--spin" as string]: `${(i % 2 ? 1 : -1) * 540}deg`,
+              animationDelay: `${(i % 24) * 0.021}s`,
             }}>{i % 2 ? "1" : "0"}</span>
           );
         })}
+        <span className="cer-ball" />
       </div>
 
       <div className="cer-core">

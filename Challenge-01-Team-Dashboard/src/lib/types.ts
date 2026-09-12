@@ -9,6 +9,8 @@ export interface Profile {
   role: MemberRole;
   /** team leads: clearance is structural, cannot be demoted */
   locked: boolean;
+  /** test or retired node: filtered from every board view unless you are core */
+  hidden: boolean;
   team: string;
   created_at: string;
 }
