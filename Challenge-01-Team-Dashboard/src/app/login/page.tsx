@@ -47,14 +47,27 @@ export default function EntryScreen() {
       }
       return;
     }
-    // the doors part, then the board is behind them. router.refresh() used to
-    // fire right after push(), which throws away the prefetch from above and
-    // forces a second full round trip to the server for no reason — that
-    // extra trip was most of the black gap after the gate opens. The fresh
-    // session cookie is already in place from signInWithPassword, so push()
-    // alone lands on an authenticated render.
+    // the doors part, then the board is behind them. This used to be a
+    // client-side router.push(), which can get stuck: if the middleware's
+    // read of the session cookie doesn't line up in time and it bounces the
+    // request back to /login — same URL it's already showing — Next's
+    // router can treat that as nowhere to go and never remounts anything,
+    // leaving the vault-void overlay on screen with no way out. A real
+    // browser navigation can't get stuck that way: worst case it lands back
+    // on a freshly-loaded /login (opening reset to false, form visible
+    // again) instead of a permanent black screen.
     setOpening(true);
-    setTimeout(() => { router.push("/dashboard/home"); }, 1150);
+    setTimeout(() => { window.location.assign("/dashboard/home"); }, 1150);
+
+    // belt and braces: if something stops that navigation from ever firing
+    // at all (not the redirect-back case above, but the request never going
+    // out), don't leave the door open forever — hand the form back.
+    setTimeout(() => {
+      if (window.location.pathname === "/login") {
+        setOpening(false);
+        setErr("That took too long. Try signing in again.");
+      }
+    }, 6000);
   }
 
   async function resend() {

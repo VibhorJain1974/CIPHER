@@ -54,9 +54,10 @@ export default function TeamHomeScreen() {
   // down with it (see dashboard/error.tsx for the net if this ever slips).
   const visible = profiles.filter((p) => !p.hidden);
   const leads = visible.filter((p) => p.role === "core");
-  const judges = visible.filter((p) => p.role === "judge");
-  const staffIds = new Set([...leads, ...judges].map((p) => p.id));
-  const members = visible.filter((p) => !staffIds.has(p.id));
+  // judges/observers don't get a row on this screen — it's the team's own
+  // home page, not a roster of everyone who can see the dashboard
+  const staffIds = new Set(leads.map((p) => p.id));
+  const members = visible.filter((p) => p.role !== "judge" && !staffIds.has(p.id));
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 40 }}>
@@ -76,10 +77,6 @@ export default function TeamHomeScreen() {
       )}
 
       <TeamRow title="CREW" people={members} />
-
-      {judges.length > 0 && (
-        <TeamRow title="OBSERVERS" people={judges} />
-      )}
     </div>
   );
 }

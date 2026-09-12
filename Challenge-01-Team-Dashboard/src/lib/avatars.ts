@@ -60,6 +60,11 @@ export function figureOf(id: string, name?: string): string | null {
  * dossier, the badge ceremony — keeps the sci-fi armor art from avatarOf()
  * and figureOf() until that decision changes. Add a member here as their
  * real photo comes in; nothing else has to move for it to show up.
+ *
+ * The file served is a dithered, one-bit render of the source photo (in
+ * /avatars/dither/), not the plain colour original (kept in /avatars/real/
+ * for re-processing) — that halftone look is what the board asked for on
+ * this screen specifically.
  */
 const REAL_PHOTO = new Set([
   "tavishi", "harsh", "vibbhor", "ridhi", "ebnay",
@@ -69,7 +74,7 @@ const REAL_PHOTO = new Set([
 /** A real photo for the team home grid, or null to fall back to avatarOf(). */
 export function realPhotoOf(id: string, name?: string): string | null {
   const slug = slugFor(id, name);
-  return slug && REAL_PHOTO.has(slug) ? `/avatars/real/${slug}.jpg` : null;
+  return slug && REAL_PHOTO.has(slug) ? `/avatars/dither/${slug}.png` : null;
 }
 
 /**
