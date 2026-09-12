@@ -24,10 +24,25 @@ const BY_NAME: Record<string, string> = {
   anushka: "anushka",
 };
 
-export function avatarOf(id: string, name?: string): string | null {
+/** Members with a full-length render as well as a bust. */
+const FULL = new Set(["vibbhor", "harsh", "ridhi", "tavishi", "anushka"]);
+
+function slugFor(id: string, name?: string): string | null {
   const byId = BY_ID[id];
-  if (byId) return `/avatars/${byId}.png`;
+  if (byId) return byId;
   const first = (name ?? "").trim().split(/\s+/)[0]?.toLowerCase();
-  const byName = first ? BY_NAME[first] : undefined;
-  return byName ? `/avatars/${byName}.png` : null;
+  return (first && BY_NAME[first]) || null;
+}
+
+/** The bust, for passes and crew cards. */
+export function avatarOf(id: string, name?: string): string | null {
+  const slug = slugFor(id, name);
+  return slug ? `/avatars/${slug}.png` : null;
+}
+
+/** The standing figure, for the dossier. Falls back to the bust. */
+export function figureOf(id: string, name?: string): string | null {
+  const slug = slugFor(id, name);
+  if (!slug) return null;
+  return FULL.has(slug) ? `/avatars/${slug}-full.png` : `/avatars/${slug}.png`;
 }

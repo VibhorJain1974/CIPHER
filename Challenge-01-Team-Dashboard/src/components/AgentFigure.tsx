@@ -1,6 +1,6 @@
 "use client";
 
-import { avatarOf } from "@/lib/avatars";
+import { figureOf } from "@/lib/avatars";
 
 /**
  * The standing operative. Same seeding as the bust on the pass, so a member's
@@ -19,14 +19,14 @@ const poly = (pts: number[][]) => pts.map((p) => p.join(",")).join(" ");
 export default function AgentFigure({
   id, col = "var(--hot)", height = 320, live = true, name,
 }: { id: string; col?: string; height?: number; live?: boolean; name?: string }) {
-  const art = avatarOf(id, name);
+  const art = figureOf(id, name);
   if (art) {
-    const w = Math.round(height * 0.72);
+    const w = Math.round(height * 0.7);
     return (
       <div style={{ position: "relative", width: w, height, overflow: "hidden", background: "var(--void)" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={art} alt="" style={{
-          display: "block", width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 22%",
+          display: "block", width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 30%",
           filter: live ? "contrast(1.05)" : "grayscale(1) brightness(.5)",
         }} />
         <span style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 52%, var(--void) 100%)" }} />
