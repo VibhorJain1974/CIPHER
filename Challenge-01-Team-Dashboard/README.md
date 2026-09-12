@@ -28,6 +28,16 @@ core clears it, and only then does it count. No spreadsheets, no shared drive.
 - **Test nodes.** Core can spawn a disposable account, hidden from the crew and excluded
   from every total, and kill it with everything it produced.
 
+## The gate
+
+Signing in is the only way through. Behind the form sit two blast doors with the team
+shield split across the seam; a cleared sign-in parts them and the board is behind.
+The shield is one image drawn twice and clipped, rather than two files, so replacing
+the logo cannot leave the halves misaligned.
+
+Under both the gate and the sign-in screen is a canvas field of ones and zeroes that
+decrypts under the cursor, with the team name hidden in it in bold.
+
 ## Stack
 
 Next.js 16 (App Router) · TypeScript · Supabase (Postgres 17, Auth, Storage, RLS) · Vercel
