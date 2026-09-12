@@ -47,9 +47,14 @@ export default function EntryScreen() {
       }
       return;
     }
-    // the doors part, then the board is behind them
+    // the doors part, then the board is behind them. router.refresh() used to
+    // fire right after push(), which throws away the prefetch from above and
+    // forces a second full round trip to the server for no reason — that
+    // extra trip was most of the black gap after the gate opens. The fresh
+    // session cookie is already in place from signInWithPassword, so push()
+    // alone lands on an authenticated render.
     setOpening(true);
-    setTimeout(() => { router.push("/dashboard/leaderboard"); router.refresh(); }, 1150);
+    setTimeout(() => { router.push("/dashboard/leaderboard"); }, 1150);
   }
 
   async function resend() {

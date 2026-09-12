@@ -575,3 +575,16 @@ html[data-theme="light"] { color-scheme: light; }
   position: fixed; inset: 0; z-index: 45; background: var(--void);
   animation: voidIn .3s ease forwards;
 }
+
+/* the dashboard's loading.tsx ring, shown while the session and profile are
+   still being read server-side after the gate opens */
+@keyframes dashRingSpin { to { transform: rotate(360deg); } }
+.dash-loading-ring {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 2px solid var(--line);
+  border-top-color: var(--hot);
+  animation: dashRingSpin .8s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dash-loading-ring { animation: none; border-top-color: var(--line); }
+}
