@@ -432,10 +432,14 @@ html[data-theme="light"] { color-scheme: light; }
   box-shadow: 0 16px 40px rgba(0,0,0,.6); animation: sigIn .3s ease; }
 
 /* ── channel ────────────────────────────────────────────────────── */
-.chat-tab { position: fixed; right: 0; bottom: 90px; z-index: 55; transform-origin: bottom right;
-  border: 1px solid var(--line); border-right: none; background: var(--panel-2); color: var(--dim);
-  font-size: 9px; letter-spacing: .2em; padding: 9px 13px; cursor: pointer; font-family: 'IBM Plex Mono', monospace; }
-.chat-tab:hover { color: var(--bone); border-color: var(--hot); }
+.chat-tab { position: fixed; right: 18px; bottom: 18px; z-index: 55;
+  display: flex; align-items: center; gap: 8px;
+  border: 1px solid var(--hot); background: var(--void-hot); color: var(--hot);
+  font-size: 10px; letter-spacing: .22em; padding: 11px 16px; cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace; box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+.chat-tab::before { content: ""; width: 6px; height: 6px; background: var(--hot); }
+.chat-tab:hover { background: var(--hot); color: var(--void); }
+.chat-tab:hover::before { background: var(--void); }
 .chat-dot { display: inline-grid; place-items: center; min-width: 15px; height: 15px; margin-left: 7px;
   background: var(--hot); color: var(--void); font-size: 8px; font-weight: 700; }
 

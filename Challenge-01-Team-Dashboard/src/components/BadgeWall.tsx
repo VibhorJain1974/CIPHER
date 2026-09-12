@@ -10,7 +10,7 @@ import MarkCard from "./MarkCard";
  * one deals its card, which carries the condition and the distance left.
  * The rack stays quiet so the dossier is not twelve paragraphs of text.
  */
-export default function BadgeWall({ badges, col = "var(--hot)" }: { badges: Badge[]; col?: string }) {
+export default function BadgeWall({ badges, col = "var(--hot)", canReplay }: { badges: Badge[]; col?: string; canReplay?: boolean }) {
   const [open, setOpen] = useState<Badge | null>(null);
   const earned = badges.filter((b) => b.earned).length;
 
@@ -36,7 +36,7 @@ export default function BadgeWall({ badges, col = "var(--hot)" }: { badges: Badg
         ))}
       </div>
 
-      {open && <MarkCard badge={open} col={col} onClose={() => setOpen(null)} />}
+      {open && <MarkCard badge={open} col={col} canReplay={canReplay} onClose={() => setOpen(null)} />}
     </div>
   );
 }

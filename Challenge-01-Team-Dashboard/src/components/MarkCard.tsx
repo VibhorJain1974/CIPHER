@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { Badge } from "@/lib/badges";
 import BadgeMedal from "./BadgeMedal";
+import CeremonyStage from "./CeremonyStage";
 
 /**
  * A mark, dealt as a card. The art is generated from the mark's own glyph,
@@ -10,7 +11,8 @@ import BadgeMedal from "./BadgeMedal";
  * exactly what closes it and how far off they are. Nothing here is fluff:
  * a locked card is the clearest instruction on the whole dashboard.
  */
-export default function MarkCard({ badge, col, onClose }: { badge: Badge; col: string; onClose: () => void }) {
+export default function MarkCard({ badge, col, onClose, canReplay }: { badge: Badge; col: string; onClose: () => void; canReplay?: boolean }) {
+  const [replay, setReplay] = useState(false);
   useEffect(() => {
     const esc = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", esc);
@@ -110,11 +112,19 @@ export default function MarkCard({ badge, col, onClose }: { badge: Badge; col: s
             </div>
           )}
 
+          {canReplay && (
+            <button className="btn" style={{ marginTop: 16, width: "100%" }}
+              onClick={() => setReplay(true)}>
+              {on ? "REPLAY THE STRIKE" : "PREVIEW THE STRIKE"}
+            </button>
+          )}
+
           <div style={{ marginTop: 16, textAlign: "center", color: "var(--faint)", fontSize: 8, letterSpacing: ".45em" }}>
             {badge.code.split("").map((c) => c.charCodeAt(0) % 2 ? "1" : "0").join(" ")}
           </div>
         </div>
       </div>
+      {replay && <CeremonyStage badge={badge} preview={!on} onDone={() => setReplay(false)} />}
     </div>
   );
 }

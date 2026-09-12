@@ -27,6 +27,10 @@ export default function FileScreen() {
   const [voided, setVoided] = useState(0);
   const [rank, setRank] = useState<number | null>(null);
   const [isTop, setIsTop] = useState(false);
+  const [viewerCore, setViewerCore] = useState(false);
+  const [removing, setRemoving] = useState(false);
+  const [confirmRemove, setConfirmRemove] = useState(false);
+  const [removeErr, setRemoveErr] = useState("");
 
   useEffect(() => {
     const supabase = createClient();
@@ -34,6 +38,10 @@ export default function FileScreen() {
       const { data: u } = await supabase.auth.getUser();
       const me = u.user?.id;
       setOwn(me === id);
+      if (me) {
+        const { data: viewer } = await supabase.from("profiles").select("role").eq("id", me).single();
+        setViewerCore(viewer?.role === "core");
+      }
 
       const [{ data: p }, { data: g }, { data: w }, { data: l }, { data: board }] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", id).single(),
@@ -188,7 +196,7 @@ export default function FileScreen() {
         <Stat label="MARKS" value={`${badges.filter((b) => b.earned).length}/${badges.length}`} />
       </div>
 
-      <BadgeWall badges={badges} col={div.col} />
+      <BadgeWall badges={badges} col={div.col} canReplay={own || viewerCore} />
 
       {/* ── yield ─────────────────────────────────────────────────── */}
       <div className="panel" style={{ padding: 18 }}>
@@ -259,6 +267,38 @@ export default function FileScreen() {
           </div>
         ))}
       </div>
+      {viewerCore && !own && !profile.locked && (
+        <div className="panel" style={{ padding: 18, borderColor: "var(--ember)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 10, marginBottom: 10 }}>
+            <span className="lbl" style={{ color: "var(--hot)" }}>CORE // REMOVE NODE</span>
+            <span className="lbl-faint" style={{ fontSize: 8 }}>LOGGED TO THE AUDIT TRAIL</span>
+          </div>
+          <div style={{ fontSize: 11, color: "var(--dim)", lineHeight: 1.75, marginBottom: 14 }}>
+            Removing {profile.full_name.toUpperCase()} deletes their account, their entries,
+            their proof, their marks and their messages. It cannot be undone, and any points
+            they contributed leave the team total with them.
+          </div>
+          {!confirmRemove ? (
+            <button className="btn" onClick={() => { setConfirmRemove(true); setRemoveErr(""); }}>
+              REMOVE THIS NODE
+            </button>
+          ) : (
+            <div style={{ display: "flex", gap: 9, flexWrap: "wrap", alignItems: "center" }}>
+              <button className="btn btn-hot" disabled={removing} onClick={async () => {
+                setRemoving(true); setRemoveErr("");
+                const { error } = await createClient().rpc("remove_member", { p_id: profile.id });
+                setRemoving(false);
+                if (error) { setRemoveErr(error.message.toUpperCase()); return; }
+                window.location.href = "/dashboard/roster";
+              }}>
+                {removing ? "REMOVING…" : `CONFIRM · REMOVE ${profile.full_name.toUpperCase()}`}
+              </button>
+              <button className="btn" onClick={() => setConfirmRemove(false)}>CANCEL</button>
+            </div>
+          )}
+          {removeErr && <div className="lbl" style={{ color: "var(--hot)", marginTop: 10 }}>{removeErr}</div>}
+        </div>
+      )}
     </div>
   );
 }
