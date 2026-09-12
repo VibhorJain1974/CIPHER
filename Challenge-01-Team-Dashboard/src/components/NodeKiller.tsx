@@ -21,12 +21,23 @@ export default function NodeKiller({ selfId }: { selfId: string }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [err, setErr] = useState("");
   const [note, setNote] = useState("");
+  const [spawned, setSpawned] = useState<{ email: string; password: string } | null>(null);
 
   const load = () => {
     createClient().from("profiles").select("*").order("full_name")
       .then(({ data }) => setRows((data as Profile[]) ?? []));
   };
   useEffect(load, []);
+
+  async function spawn() {
+    setBusy("spawn"); setErr(""); setNote("");
+    const { data, error } = await createClient().rpc("spawn_test_node");
+    setBusy(null);
+    if (error) { setErr(error.message.toUpperCase()); return; }
+    const row = Array.isArray(data) ? data[0] : data;
+    setSpawned(row as { email: string; password: string });
+    load();
+  }
 
   async function toggleHidden(p: Profile) {
     setBusy(p.id); setErr(""); setNote("");
@@ -62,6 +73,27 @@ export default function NodeKiller({ selfId }: { selfId: string }) {
         <span className="lbl-hot">NODES // REMOVAL</span>
         <span className="lbl-faint" style={{ fontSize: 8 }}>DISABLE HIDES A NODE FROM THE CREW · KILL IS PERMANENT</span>
       </div>
+
+      <div style={{ padding: "12px 15px", borderBottom: "1px solid var(--line-2)", display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+        <button className="btn" disabled={busy === "spawn"} onClick={spawn}>
+          {busy === "spawn" ? "SPAWNING…" : "+ NEW TEST NODE"}
+        </button>
+        <span className="lbl-faint" style={{ fontSize: 8 }}>
+          HIDDEN FROM THE CREW FROM BIRTH · DISPOSABLE
+        </span>
+      </div>
+
+      {spawned && (
+        <div style={{ padding: "12px 15px", borderBottom: "1px solid var(--line-2)", background: "var(--void-hot)" }}>
+          <div className="lbl" style={{ color: "var(--hot)", marginBottom: 8 }}>TEST NODE READY · COPY THESE NOW</div>
+          <div className="val" style={{ fontSize: 12, color: "var(--bone)", lineHeight: 1.9, wordBreak: "break-all" }}>
+            {spawned.email}<br />{spawned.password}
+          </div>
+          <div className="lbl-faint" style={{ fontSize: 8, marginTop: 8 }}>
+            THE PASSWORD IS NOT STORED IN READABLE FORM AND CANNOT BE SHOWN AGAIN
+          </div>
+        </div>
+      )}
 
       {err && <div style={{ padding: "10px 15px", borderBottom: "1px solid var(--line-2)" }}>
         <span className="lbl" style={{ color: "var(--hot)" }}>{err}</span></div>}

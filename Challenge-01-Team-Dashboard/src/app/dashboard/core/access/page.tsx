@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { MemberRole, Profile, RivalTeam } from "@/lib/types";
 import CodeMinter from "@/components/CodeMinter";
 import NodeKiller from "@/components/NodeKiller";
+import Outbox from "@/components/Outbox";
 
 const ROLES: { key: MemberRole; label: string; col: string }[] = [
   { key: "member", label: "MBR",  col: "var(--dimmer)" },
@@ -135,6 +136,9 @@ export default function KeysScreen() {
           <NodeKiller selfId={selfId} />
         </div>
       )}
+      <div style={{ marginTop: 22 }}>
+        <Outbox />
+      </div>
     </div>
   );
 }

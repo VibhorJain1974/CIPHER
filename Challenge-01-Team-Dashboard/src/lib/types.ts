@@ -136,7 +136,8 @@ const DIVISIONS: { match: RegExp; div: Division }[] = [
   { match: /dsa|algo|cp|vector/i,           div: { code: "VCT",  name: "VECTOR DIVISION",  glyph: "◤", col: "#b8846b" } },
   { match: /research|paper|quantum/i,       div: { code: "QNT",  name: "QUANTUM ARCHIVE",  glyph: "◉", col: "#7f9086" } },
   { match: /design|ui|ux|creative/i,        div: { code: "PRS",  name: "PRISM DIVISION",   glyph: "◭", col: "#a8705f" } },
-  { match: /hr|ops|operation|manage/i,      div: { code: "OPS",  name: "OPS COMMAND",      glyph: "✦", col: "#9a938a" } },
+  { match: /social|pr|media|comm|market/i,  div: { code: "SIG",  name: "SIGNAL DIVISION",  glyph: "◎", col: "#bfa46a" } },
+  { match: /hr|ops|operation|event|manage/i,div: { code: "OPS",  name: "OPS COMMAND",      glyph: "✦", col: "#9a938a" } },
 ];
 
 export function divisionOf(department: string | null | undefined): Division {
