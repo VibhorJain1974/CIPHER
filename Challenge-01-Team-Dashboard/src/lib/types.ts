@@ -11,6 +11,9 @@ export interface Profile {
   locked: boolean;
   /** test or retired node: filtered from every board view unless you are core */
   hidden: boolean;
+  github_url: string | null;
+  linkedin_url: string | null;
+  phone: string | null;
   team: string;
   created_at: string;
 }
@@ -139,6 +142,9 @@ const DIVISIONS: { match: RegExp; div: Division }[] = [
   { match: /social|pr|media|comm|market/i,  div: { code: "SIG",  name: "SIGNAL DIVISION",  glyph: "◎", col: "#bfa46a" } },
   { match: /hr|ops|operation|event|manage/i,div: { code: "OPS",  name: "OPS COMMAND",      glyph: "✦", col: "#9a938a" } },
 ];
+
+/** Every division, for the legend and the edit form. */
+export const DIVISION_LIST: Division[] = DIVISIONS.map((d) => d.div);
 
 export function divisionOf(department: string | null | undefined): Division {
   const d = department ?? "";

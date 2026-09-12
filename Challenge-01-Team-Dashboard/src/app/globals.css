@@ -491,3 +491,7 @@ html[data-theme="light"] { color-scheme: light; }
 .chat-x { border: none; background: transparent; color: var(--dim); cursor: pointer;
   font-size: 17px; line-height: 1; padding: 0 4px; font-family: inherit; }
 .chat-x:hover { color: var(--hot); }
+
+.link-chip { border: 1px solid var(--line); color: var(--dim); font-size: 8px;
+  letter-spacing: .16em; padding: 5px 9px; display: inline-block; }
+.link-chip:hover { color: var(--hot); border-color: var(--hot); }

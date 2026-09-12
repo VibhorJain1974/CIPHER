@@ -8,6 +8,7 @@ import { badgesFor, radarAxes } from "@/lib/badges";
 import AgentFigure from "@/components/AgentFigure";
 import Radar from "@/components/Radar";
 import BadgeWall from "@/components/BadgeWall";
+import ProfileEdit from "@/components/ProfileEdit";
 
 interface Weekly { week_index: number; points: number }
 interface LogRow {
@@ -31,6 +32,8 @@ export default function FileScreen() {
   const [removing, setRemoving] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
   const [removeErr, setRemoveErr] = useState("");
+
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
     const supabase = createClient();
@@ -75,7 +78,7 @@ export default function FileScreen() {
         await supabase.from("access_log").insert({ viewer_id: me, viewed_member_id: id, resource: "profile" });
       }
     })();
-  }, [id]);
+  }, [id, tick]);
 
   if (!profile) return <div className="lbl-faint">OPENING FILE…</div>;
 
@@ -144,6 +147,17 @@ export default function FileScreen() {
             <Row k="STANDING" v={rank ? `${tier.code} · ${String(rank).padStart(2, "0")}` : tier.code} hot />
             <Row k="WINDOW" v="01.09 . 15.11" />
           </div>
+
+          {(profile.github_url || profile.linkedin_url) && (
+            <div style={{ display: "flex", gap: 7, flexWrap: "wrap" }}>
+              {profile.github_url && (
+                <a href={profile.github_url} target="_blank" rel="noreferrer noopener" className="link-chip">GITHUB ↗</a>
+              )}
+              {profile.linkedin_url && (
+                <a href={profile.linkedin_url} target="_blank" rel="noreferrer noopener" className="link-chip">LINKEDIN ↗</a>
+              )}
+            </div>
+          )}
 
           <div>
             <div style={{ display: "flex", alignItems: "flex-end", gap: 1, height: 22 }}>
@@ -267,6 +281,17 @@ export default function FileScreen() {
           </div>
         ))}
       </div>
+      {own && (
+        <ProfileEdit
+          id={profile.id}
+          department={profile.department}
+          github={profile.github_url}
+          linkedin={profile.linkedin_url}
+          phone={profile.phone}
+          onSaved={() => setTick((t) => t + 1)}
+        />
+      )}
+
       {viewerCore && !own && !profile.locked && (
         <div className="panel" style={{ padding: 18, borderColor: "var(--ember)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 10, marginBottom: 10 }}>

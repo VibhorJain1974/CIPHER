@@ -1,54 +1,75 @@
-# CIPHER — Tech Sprint Journey 2026 Team Dashboard
+# Challenge 01 — CIPHER Team Dashboard
 
-Built with Next.js 16 + Supabase (Postgres, Auth, Storage) + Three.js.
+A private, verified achievement board for team CIPHER. Members file what they did,
+core clears it, and only then does it count. No spreadsheets, no shared drive.
 
-## Deploy (takes ~2 minutes)
+**Live:** https://cipher-tsj-dashboard.vercel.app (sealed — enrolment is by minted code only)
 
-The Supabase backend is already live and wired into the code (URL + anon key are in `src/lib/supabase/config.ts` — the anon key is safe to expose, it's protected entirely by Row Level Security). You just need to deploy the frontend:
+## What it does
 
-```bash
-npm install -g vercel
-cd cipher-dashboard
-npm install
-vercel --prod
-```
+- **Filing.** A member picks a codex entry, sets the date it happened and the venue
+  where it happened, attaches proof, names anyone who worked on it with them, and
+  optionally links the folder in this repo. Nothing counts until core clears it.
+- **Proof integrity.** Every attachment is SHA-256 hashed in the browser before upload,
+  so the same screenshot cannot be filed twice under two names.
+- **Three tiers of clearance.** Members file and read. Judges read and verify. Core
+  does everything and mints codes. Leads and judges cannot file at all: the people who
+  clear entries do not compete on the same ladder.
+- **Row Level Security everywhere.** Every view is `security_invoker`, so a view cannot
+  be used as a way around the policies. A member cannot read another member's queue,
+  cannot change their own role, and cannot make themselves a locked lead.
+- **Audit trail.** Who looked at whose file, and every change to an entry or a profile,
+  is written to an append-only log the way a git history reads.
+- **Credit ledger.** The CREDITS screen answers "who actually built this" for any
+  cleared deliverable, by member or by deliverable.
+- **Marks.** Twelve achievements, evaluated server-side by trigger. Striking one plays
+  a full-screen ceremony on that member's screen, exactly once, ever.
+- **Team feed and channel.** A live signal bar and a sealed team chat, both realtime.
+- **Test nodes.** Core can spawn a disposable account, hidden from the crew and excluded
+  from every total, and kill it with everything it produced.
 
-Follow the prompts (log in with the Vercel account tied to vibhorjain1974's-projects). No environment variables need to be set — everything needed is already in the code.
+## Stack
 
-## Or run locally first
+Next.js 16 (App Router) · TypeScript · Supabase (Postgres 17, Auth, Storage, RLS) · Vercel
+
+## Running it
 
 ```bash
 npm install
 npm run dev
 ```
 
-Visit http://localhost:3000
+The Supabase URL and anon key are in `src/lib/supabase/config.ts`. The anon key is
+public by design; Row Level Security is what protects the data. Never add a
+service-role key to this repo.
 
-## Invite codes (share with your team, change these later in Supabase if you want)
+## Mail
 
-- Core members (Vibbhor, Harsh Gupta): `CIPHER-CORE-2026`
-- External judges / AARVAK organisers (read-only): `CIPHER-JUDGE-2026`
-- Everyone else: `CIPHER-CREW-2026`
+Supabase's built-in mailer is rate-limited to a handful of messages per hour and lands
+in spam, so it is not used for anything the team relies on.
 
-## What's built
+Two settings make enrolment work:
 
-- Self-signup with invite code (auto-assigns core vs member role)
-- Achievement submission with proof upload (image/PDF, SHA-256 hashed) — pending until a core member verifies it
-- Core-only verification queue: approve + assign points, or reject with a reason
-- Team leaderboard (cumulative, never averaged), points-by-category chart, 90-day activity heatmap
-- Roster with view-only profiles — members can browse each other but can't edit anyone else
-- Audit log (git-history style diff viewer) of every insert/update/delete on achievements — core only
-- Profile access log — tracks who viewed whose profile and how many times — core only
-- Duplicate-proof detection: flags when the same file (by hash) is reused across multiple submissions
+1. **Authentication → Providers → Email → Confirm email OFF.** The board is sealed and
+   entry is by minted single-use code, so a confirmation round trip adds nothing.
+2. **Project Settings → Authentication → SMTP Settings**, pointed at a real provider,
+   for password resets. Resend's free tier (3,000/month) is enough several times over:
 
-## Supabase project
+   ```
+   Host      smtp.resend.com
+   Port      465
+   Username  resend
+   Password  <Resend API key, starts re_>
+   ```
 
-Project ref: `fxshhiklopnppyybbwxg` (in your `zyxwpokimatojwdtawkb` org, free tier, $0/month)
-You have full access to it via the Supabase dashboard under your account.
+Queue notifications (filed, cleared, voided) are written to the `outbox` table by
+trigger and shown in KEYS → OUTBOX. Delivery is deliberately a separate step, so a
+provider outage never blocks the board.
 
-## Honest limitations — read before demo day
+## Layout
 
-- "No loophole" isn't a real security property for anything, including this. What's actually enforced: Postgres Row Level Security on every table (members can only ever touch their own achievement rows; only core members can verify, see all submissions, or read the audit/access logs), server-verified invite codes for role assignment (client can't self-promote to core), and file-type/size checks + SHA-256 hashing on proofs to catch obvious reuse.
-- Proof verification is a duplicate-hash check and human review, not deepfake/tamper detection — a determined person could still fake a screenshot. Judges/organisers verifying visually is still the last line of defense, same as the rulebook says.
-- Email confirmation is on by default (Supabase sends a confirmation link on signup). If that's annoying for a demo, it can be turned off in Supabase Auth settings.
-- Storage/DB is on Supabase's free tier — fine for a team of 8-10, would need upgrading before it's the "Central AARVAK Dashboard" for all 5 teams.
+```
+src/app/          screens — gate, login, enrol, dashboard
+src/components/   agent card, radar, medals, filing bench, codex, nav, chat
+src/lib/          types, divisions, point rules, badge logic, avatars
+```
