@@ -10,10 +10,12 @@ import AgentSigil from "./AgentSigil";
  * members can never end up with the same one.
  */
 export default function AgentCard({
-  name, department, role, locked, id, points, rank, compact,
+  name, department, role, locked, id, points, rank, compact, aura,
 }: {
   name: string; department: string; role: MemberRole; locked: boolean;
   id: string; points?: number; rank?: number | null; compact?: boolean;
+  /** command runs the board — their cards carry a quiet glow to say so */
+  aura?: boolean;
 }) {
   const div = divisionOf(department);
   const lvl = accessLevel(role, locked);
@@ -22,10 +24,11 @@ export default function AgentCard({
   const tier = points === undefined ? null : tierOf(points);
 
   return (
-    <div style={{
+    <div className={aura ? "aura-glow" : undefined} style={{
       border: "1px solid var(--line)",
       background: "linear-gradient(135deg, var(--panel) 0%, var(--panel-2) 60%, var(--void) 100%)",
       position: "relative", overflow: "hidden",
+      ...(aura ? { ["--aura-col" as string]: div.col } : {}),
     }}>
       {/* division stripe */}
       <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, background: div.col }} />

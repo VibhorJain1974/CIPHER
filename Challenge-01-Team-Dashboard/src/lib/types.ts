@@ -14,6 +14,7 @@ export interface Profile {
   github_url: string | null;
   linkedin_url: string | null;
   phone: string | null;
+  contact_email: string | null;
   team: string;
   created_at: string;
 }
@@ -135,12 +136,12 @@ export interface Division { code: string; name: string; glyph: string; col: stri
 const DIVISIONS: { match: RegExp; div: Division }[] = [
   { match: /cyber|sec|ctf|hex/i,            div: { code: "HEX",  name: "HEX DIVISION",     glyph: "⬢", col: "#ff4a12" } },
   { match: /ai|ml|machine|data|neural/i,    div: { code: "NRL",  name: "NEURAL DIVISION",  glyph: "◈", col: "#c07a4e" } },
-  { match: /web|front|back|full|dev|grid/i, div: { code: "GRD",  name: "GRID DIVISION",    glyph: "▦", col: "#9fa06a" } },
+  { match: /web|front|back|full|dev|grid|tech/i, div: { code: "GRD",  name: "GRID DIVISION",    glyph: "▦", col: "#9fa06a" } },
   { match: /dsa|algo|cp|vector/i,           div: { code: "VCT",  name: "VECTOR DIVISION",  glyph: "◤", col: "#b8846b" } },
-  { match: /research|paper|quantum/i,       div: { code: "QNT",  name: "QUANTUM ARCHIVE",  glyph: "◉", col: "#7f9086" } },
+  { match: /research|paper|quantum|r ?& ?d/i, div: { code: "QNT",  name: "QUANTUM ARCHIVE",  glyph: "◉", col: "#7f9086" } },
   { match: /design|ui|ux|creative/i,        div: { code: "PRS",  name: "PRISM DIVISION",   glyph: "◭", col: "#a8705f" } },
   { match: /social|pr|media|comm|market/i,  div: { code: "SIG",  name: "SIGNAL DIVISION",  glyph: "◎", col: "#bfa46a" } },
-  { match: /hr|ops|operation|event|manage/i,div: { code: "OPS",  name: "OPS COMMAND",      glyph: "✦", col: "#9a938a" } },
+  { match: /hr|ops|operation|event|manage|observ/i,div: { code: "OPS",  name: "OPS COMMAND",      glyph: "✦", col: "#9a938a" } },
 ];
 
 /** Every division, for the legend and the edit form. */

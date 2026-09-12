@@ -496,6 +496,40 @@ html[data-theme="light"] { color-scheme: light; }
   letter-spacing: .16em; padding: 5px 9px; display: inline-block; }
 .link-chip:hover { color: var(--hot); border-color: var(--hot); }
 
+/* ── icon chips: minimal circular logos that redirect out ─────────
+   Deliberately tiny and quiet — a row of these should read as a footnote,
+   not a feature. Colour lives only on hover so a full row never competes
+   with the rest of the dossier. */
+.icon-chip {
+  width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--line); border-radius: 50%; color: var(--dim); flex-shrink: 0;
+  transition: color .15s ease, border-color .15s ease, transform .15s ease;
+}
+.icon-chip:hover { color: var(--hot); border-color: var(--hot); transform: translateY(-1px); }
+.icon-chip svg { width: 12px; height: 12px; fill: currentColor; }
+
+/* ── the "add links" trigger: as small as a control can be and still
+   be clickable ─────────────────────────────────────────────────── */
+.btn-mini {
+  border: 1px solid var(--line); background: transparent; color: var(--faint);
+  font-size: 8px; letter-spacing: .18em; text-transform: uppercase;
+  padding: 4px 8px; cursor: pointer;
+}
+.btn-mini:hover { color: var(--bone); border-color: var(--dimmer); }
+
+/* ── edit-file modal: a popup, not an inline block that shoves the
+   dossier around every time someone opens it ──────────────────── */
+.modal-scrim {
+  position: fixed; inset: 0; z-index: 200; background: rgba(4,5,5,.72);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+:root[data-theme="light"] .modal-scrim { background: rgba(20,20,18,.45); }
+.modal-panel {
+  width: 100%; max-width: 460px; max-height: 88vh; overflow-y: auto;
+  background: var(--panel-2); border: 1px solid var(--line); box-shadow: 0 30px 70px rgba(0,0,0,.5);
+  padding: 20px;
+}
+
 /* ── the vault door ──────────────────────────────────────────────
    Two blast doors with the shield split across the seam. They part on a
    cleared sign-in and the board is behind them.
@@ -644,4 +678,18 @@ html[data-theme="light"] { color-scheme: light; }
     animation: none;
   }
   .home-card:hover { transform: none; }
+}
+
+/* aura: a quiet, breathing glow for command cards and whoever currently
+   holds the highest banked points. --aura-col is set per element (a
+   division colour for leads, var(--hot) for the top scorer) so one rule
+   covers both. Uses drop-shadow rather than box-shadow so it isn't clipped
+   by a card's own overflow:hidden. */
+@keyframes auraPulse {
+  0%, 100% { filter: drop-shadow(0 0 5px var(--aura-col)) drop-shadow(0 0 1px var(--aura-col)); }
+  50%      { filter: drop-shadow(0 0 15px var(--aura-col)) drop-shadow(0 0 4px var(--aura-col)); }
+}
+.aura-glow { animation: auraPulse 2.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .aura-glow { animation: none; filter: drop-shadow(0 0 7px var(--aura-col)); }
 }

@@ -65,7 +65,7 @@ export default function CrewScreen() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 14 }}>
           {leads.map((l) => (
             <Link key={l.id} href={`/dashboard/profile/${l.id}`} style={{ color: "inherit", display: "block" }}>
-              <AgentCard name={l.full_name} department={l.department} role={l.role} locked={l.locked} id={l.id} compact />
+              <AgentCard name={l.full_name} department={l.department} role={l.role} locked={l.locked} id={l.id} compact aura />
             </Link>
           ))}
         </div>
@@ -112,6 +112,7 @@ export default function CrewScreen() {
               const prof = profiles.find((p) => p.id === m.member_id);
               const mine = log.filter((r) => r.member_id === m.member_id);
               const pts = Number(m.total_points);
+              const isTop = pts > 0 && pts === Number(field[0].total_points);
               const badges = badgesFor({
                 entries: mine.map((r) => ({
                   points: r.points, category: r.category,
@@ -119,7 +120,7 @@ export default function CrewScreen() {
                 })),
                 total: pts,
                 voided: 0,
-                isTop: pts > 0 && pts === Number(field[0].total_points),
+                isTop,
               });
               return (
                 <CrewDossier
@@ -137,6 +138,7 @@ export default function CrewScreen() {
                   badges={badges}
                   entries={mine}
                   series={series}
+                  isTop={isTop}
                 />
               );
             })}

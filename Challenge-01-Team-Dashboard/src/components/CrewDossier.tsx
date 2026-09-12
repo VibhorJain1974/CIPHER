@@ -23,11 +23,13 @@ export interface CrewEntry {
  * so nothing reflows under the cursor.
  */
 export default function CrewDossier({
-  id, name, department, role, locked, points, rank, verified, held, marks, badges, entries, series,
+  id, name, department, role, locked, points, rank, verified, held, marks, badges, entries, series, isTop,
 }: {
   id: string; name: string; department: string; role: MemberRole; locked: boolean;
   points: number; rank: number; verified: number; held: number;
   marks: number; badges: Badge[]; entries: CrewEntry[]; series: number[];
+  /** currently holds the highest banked points on the field — gets a glow, not just a number */
+  isTop?: boolean;
 }) {
   const div = divisionOf(department);
   const lvl = accessLevel(role, locked);
@@ -44,7 +46,8 @@ export default function CrewDossier({
 
   return (
     <div className="dcard-slot">
-      <Link href={`/dashboard/profile/${id}`} className="dcard" style={{ borderLeftColor: div.col }}>
+      <Link href={`/dashboard/profile/${id}`} className={`dcard${isTop ? " aura-glow" : ""}`}
+        style={{ borderLeftColor: div.col, ...(isTop ? { ["--aura-col" as string]: "var(--hot)" } : {}) }}>
         <span className="dcard-glitch" />
 
         {/* ambient layers, only once open */}
