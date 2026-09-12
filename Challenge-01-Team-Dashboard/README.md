@@ -46,25 +46,43 @@ service-role key to this repo.
 ## Mail
 
 Supabase's built-in mailer is rate-limited to a handful of messages per hour and lands
-in spam, so it is not used for anything the team relies on.
+in spam, so nothing the team relies on goes through it.
 
-Two settings make enrolment work:
+**Queue notifications** are an outbox, not a fire-and-forget send. A trigger writes a
+row into `outbox` the moment an entry is filed, cleared or voided: leads are paged on
+filing, the member is told when theirs clears or is voided, and the voided message
+carries the reason the verifier actually typed. Test nodes are skipped so a demo never
+pages anyone.
+
+A `drain-outbox` Edge Function posts those through Resend once a minute on `pg_cron`,
+marks the row sent only on a 2xx, and writes the provider's own error back onto the row
+otherwise. Nothing is silently lost, and KEYS → OUTBOX shows anything still waiting with
+COPY and MARK SENT for sending by hand.
+
+The sender falls back: the team domain first, Resend's sandbox address second. An
+unverified domain is a configuration state rather than a dead letter, so mail keeps
+flowing to the account owner while DNS propagates and reaches everyone the moment it
+verifies, with no redeploy.
+
+Two settings finish the job:
 
 1. **Authentication → Providers → Email → Confirm email OFF.** The board is sealed and
    entry is by minted single-use code, so a confirmation round trip adds nothing.
-2. **Project Settings → Authentication → SMTP Settings**, pointed at a real provider,
-   for password resets. Resend's free tier (3,000/month) is enough several times over:
+2. **Project Settings → Authentication → SMTP Settings** for password resets:
 
    ```
    Host      smtp.resend.com
    Port      465
    Username  resend
-   Password  <Resend API key, starts re_>
+   Password  <Resend API key>
    ```
 
-Queue notifications (filed, cleared, voided) are written to the `outbox` table by
-trigger and shown in KEYS → OUTBOX. Delivery is deliberately a separate step, so a
-provider outage never blocks the board.
+The Resend key belongs in **Edge Functions → Secrets** as `RESEND_API_KEY`, never in
+this repo.
+
+WhatsApp rows are written to the same outbox and deliberately left undelivered: there is
+no free WhatsApp API, and both Twilio and Meta need a verified business sender. Marking
+them sent would be a lie the panel then repeats back at you.
 
 ## Layout
 
