@@ -1,5 +1,7 @@
 "use client";
 
+import { avatarOf } from "@/lib/avatars";
+
 /**
  * The avatar. Nobody uploads a photo, and stock illustrations would look
  * borrowed, so each node gets a generated one instead: a masked bust built
@@ -15,6 +17,24 @@ function rng(seed: string) {
 export default function AgentSigil({
   id, col = "var(--hot)", size = 92, live = true,
 }: { id: string; col?: string; size?: number; live?: boolean }) {
+  const art = avatarOf(id);
+  if (art) {
+    return (
+      <div style={{ position: "relative", width: size, height: size, overflow: "hidden", flexShrink: 0, background: "var(--void)" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={art} alt="" width={size} height={size}
+          style={{
+            display: "block", width: size, height: size, objectFit: "cover",
+            filter: live ? "none" : "grayscale(1) brightness(.55)",
+          }} />
+        <span style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, transparent 55%, var(--void) 100%)` }} />
+        <span style={{ position: "absolute", inset: 0, boxShadow: `inset 0 0 0 1px ${col}55` }} />
+        <span style={{ position: "absolute", top: 2, left: 2, width: 7, height: 7, borderTop: `1px solid ${col}`, borderLeft: `1px solid ${col}` }} />
+        <span style={{ position: "absolute", bottom: 2, right: 2, width: 7, height: 7, borderBottom: `1px solid ${col}`, borderRight: `1px solid ${col}` }} />
+      </div>
+    );
+  }
+
   const r = rng(id);
 
   // the bust: a head block and shoulders, widths jittered per node
@@ -22,11 +42,12 @@ export default function AgentSigil({
   const headH = 30 + Math.round(r() * 8);
   const jaw = 3 + Math.round(r() * 5);
   const shoulderW = 62 + Math.round(r() * 14);
-  const visorY = 20 + Math.round(r() * 6);
-  const visorH = 5 + Math.round(r() * 4);
+  const visorH = 5 + Math.round(r() * 3);
 
   const cx = 50;
-  const headTop = 14;
+  const headTop = 12;
+  const visorY = Math.round(headH * 0.42);
+  const neckY = headTop + headH - 3;
   const head = [
     [cx - headW / 2, headTop + jaw],
     [cx - headW / 2 + jaw, headTop],
@@ -37,12 +58,14 @@ export default function AgentSigil({
     [cx - headW / 2, headTop + headH - jaw * 2],
   ].map((p) => p.join(",")).join(" ");
 
+  // the shoulders meet the jaw, so the bust reads as one figure rather
+  // than a head floating above a block
   const shoulders = [
     [cx - shoulderW / 2, 100],
-    [cx - shoulderW / 2 + 6, 74],
-    [cx - 11, 62],
-    [cx + 11, 62],
-    [cx + shoulderW / 2 - 6, 74],
+    [cx - shoulderW / 2 + 5, neckY + 14],
+    [cx - headW / 2 + 2, neckY],
+    [cx + headW / 2 - 2, neckY],
+    [cx + shoulderW / 2 - 5, neckY + 14],
     [cx + shoulderW / 2, 100],
   ].map((p) => p.join(",")).join(" ");
 

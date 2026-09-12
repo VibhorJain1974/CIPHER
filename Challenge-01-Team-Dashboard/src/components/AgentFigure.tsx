@@ -1,5 +1,7 @@
 "use client";
 
+import { avatarOf } from "@/lib/avatars";
+
 /**
  * The standing operative. Same seeding as the bust on the pass, so a member's
  * figure and their pass photo are recognisably the same person, but drawn
@@ -17,6 +19,32 @@ const poly = (pts: number[][]) => pts.map((p) => p.join(",")).join(" ");
 export default function AgentFigure({
   id, col = "var(--hot)", height = 320, live = true,
 }: { id: string; col?: string; height?: number; live?: boolean }) {
+  const art = avatarOf(id);
+  if (art) {
+    const w = Math.round(height * 0.72);
+    return (
+      <div style={{ position: "relative", width: w, height, overflow: "hidden", background: "var(--void)" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={art} alt="" style={{
+          display: "block", width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 22%",
+          filter: live ? "contrast(1.05)" : "grayscale(1) brightness(.5)",
+        }} />
+        <span style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 52%, var(--void) 100%)" }} />
+        <span className="fig-plate-scan" style={{ position: "absolute", left: 0, right: 0, height: "16%", background: `linear-gradient(180deg, transparent, ${col}55, transparent)` }} />
+        <span style={{ position: "absolute", inset: 0, boxShadow: `inset 0 0 0 1px ${col}44` }} />
+        {(["tl", "tr", "bl", "br"] as const).map((k) => (
+          <span key={k} style={{
+            position: "absolute", width: 13, height: 13,
+            [k[0] === "t" ? "top" : "bottom"]: 5,
+            [k[1] === "l" ? "left" : "right"]: 5,
+            [k[0] === "t" ? "borderTop" : "borderBottom"]: `1px solid ${col}`,
+            [k[1] === "l" ? "borderLeft" : "borderRight"]: `1px solid ${col}`,
+          } as React.CSSProperties} />
+        ))}
+      </div>
+    );
+  }
+
   const r = rng(id);
 
   const cx = 60;

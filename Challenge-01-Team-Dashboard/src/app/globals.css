@@ -456,3 +456,8 @@ html[data-theme="light"] { color-scheme: light; }
   border: 1px solid var(--line-2); padding: 7px 10px; background: var(--void); word-break: break-word; }
 .chat-msg.mine .chat-body { border-color: var(--ember); background: var(--void-hot); }
 .chat-form { display: flex; gap: 7px; padding: 11px; border-top: 1px solid var(--line); }
+
+/* a portrait plate is read the same way the drawn figure is */
+@keyframes plateScan { from { top: -18% } to { top: 104% } }
+.fig-plate-scan { top: -18%; animation: plateScan 5.4s linear infinite; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .fig-plate-scan { display: none } }
