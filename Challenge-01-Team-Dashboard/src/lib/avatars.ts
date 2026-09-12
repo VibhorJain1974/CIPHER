@@ -78,6 +78,16 @@ export function realPhotoOf(id: string, name?: string): string | null {
 }
 
 /**
+ * The plain colour source behind the dithered render above — same photo,
+ * kept for the hover reveal on the team home grid (dithered at rest, colour
+ * on hover) rather than for display on its own.
+ */
+export function colorPhotoOf(id: string, name?: string): string | null {
+  const slug = slugFor(id, name);
+  return slug && REAL_PHOTO.has(slug) ? `/avatars/real/${slug}.jpg` : null;
+}
+
+/**
  * Members whose real photo is known to be on the way but isn't in yet — the
  * team home page shows a "coming soon" tile for these instead of quietly
  * falling back to the armor art, so it reads as pending rather than done.

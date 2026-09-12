@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { divisionOf, type Profile } from "@/lib/types";
-import { avatarOf, photoPending, realPhotoOf } from "@/lib/avatars";
+import { avatarOf, colorPhotoOf, photoPending, realPhotoOf } from "@/lib/avatars";
 
 /**
  * What the doors open onto. No rank, no points — the board asked for a
@@ -84,7 +84,7 @@ export default function TeamHomeScreen() {
 function TeamRow({ title, people }: { title: string; people: Profile[] }) {
   return (
     <section style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div className="lbl-hot" style={{ fontSize: 10 }}>{title}</div>
+      <div className="lbl-hot" style={{ fontSize: 10, textAlign: "center" }}>{title}</div>
       <div style={{
         display: "flex",
         flexWrap: "wrap",
@@ -95,7 +95,9 @@ function TeamRow({ title, people }: { title: string; people: Profile[] }) {
           const name = (p.full_name ?? "").trim();
           const div = divisionOf(p.department);
           const pending = photoPending(p.id, name);
-          const art = pending ? null : realPhotoOf(p.id, name) ?? avatarOf(p.id, name);
+          const dithered = pending ? null : realPhotoOf(p.id, name);
+          const color = pending ? null : colorPhotoOf(p.id, name);
+          const art = dithered ?? (pending ? null : avatarOf(p.id, name));
           return (
             <Link
               key={p.id}
@@ -107,7 +109,7 @@ function TeamRow({ title, people }: { title: string; people: Profile[] }) {
                 width: 150, flex: "0 0 150px",
               }}
             >
-              <div style={{
+              <div className={dithered && color ? "home-photo" : undefined} style={{
                 aspectRatio: "3 / 4", position: "relative", overflow: "hidden",
                 background: art ? `linear-gradient(180deg, transparent 55%, var(--panel-2) 100%), var(--void)`
                   : "var(--panel-2)",
@@ -126,6 +128,12 @@ function TeamRow({ title, people }: { title: string; people: Profile[] }) {
                       PHOTO<br />COMING SOON
                     </div>
                   </div>
+                ) : dithered && color ? (
+                  <>
+                    <img src={dithered} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center" }} />
+                    <img src={color} alt="" className="home-photo-color"
+                      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center" }} />
+                  </>
                 ) : art ? (
                   <img src={art} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center" }} />
                 ) : (

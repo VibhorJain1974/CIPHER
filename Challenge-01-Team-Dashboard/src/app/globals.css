@@ -588,3 +588,19 @@ html[data-theme="light"] { color-scheme: light; }
 @media (prefers-reduced-motion: reduce) {
   .dash-loading-ring { animation: none; border-top-color: var(--line); }
 }
+
+/* team home grid: the halftone render sits on top at rest; hovering (or
+   focusing, for keyboard/touch users who can't hover) fades in the plain
+   colour photo underneath, so the retro look is the default and the real
+   face is one interaction away rather than gone entirely */
+.home-photo-color {
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+.home-photo:hover .home-photo-color,
+.home-photo:focus-within .home-photo-color {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-photo-color { transition: none; }
+}

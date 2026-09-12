@@ -56,13 +56,24 @@ export default function ArcsScreen() {
   const x = (i: number) => PAD_L + i * ((W - PAD_L - PAD_R) / Math.max(1, weeks - 1));
   const y = (v: number) => H - PAD_B - (v / maxY) * (H - PAD_T - PAD_B);
 
-  // push end-labels apart so close finishers stay readable
-  const endLabels = useMemo(() => {
-    const sorted = lines.map((l, i) => ({ i, id: l.id, yy: y(l.total) })).sort((a, b) => a.yy - b.yy);
+  // members tied on the same total (almost always a wall of zeros before the
+  // sprint gets going) share one exact point on the axis — labelling each of
+  // them separately just stacks identical-looking text on top of itself.
+  // Group ties into one label instead, then push the groups apart so close
+  // finishers still stay readable.
+  const endGroups = useMemo(() => {
+    const byTotal = new Map<number, typeof lines>();
+    lines.forEach((l) => {
+      const arr = byTotal.get(l.total) ?? [];
+      arr.push(l);
+      byTotal.set(l.total, arr);
+    });
+    const groups = Array.from(byTotal.entries())
+      .map(([total, members]) => ({ total, members, yy: y(total) }))
+      .sort((a, b) => a.yy - b.yy);
     let prev = -Infinity;
-    const map: Record<string, number> = {};
-    sorted.forEach((o) => { const yy = Math.max(o.yy, prev + 15); map[o.id] = yy; prev = yy; });
-    return map;
+    groups.forEach((g) => { g.yy = Math.max(g.yy, prev + 15); prev = g.yy; });
+    return groups;
   }, [lines, maxY]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const selected = lines.find((l) => l.id === sel) ?? null;
@@ -139,13 +150,23 @@ export default function ArcsScreen() {
               );
             })}
 
-            {lines.map((l) => {
-              const on = sel === null || sel === l.id;
+            {endGroups.map((g) => {
+              if (g.members.length === 1) {
+                const l = g.members[0];
+                const on = sel === null || sel === l.id;
+                return (
+                  <text key={l.id} x={W - PAD_R + 10} y={g.yy + 3}
+                    fontSize={10} fill={l.col} opacity={on ? 1 : 0.2} letterSpacing=".08em"
+                    style={{ cursor: "pointer" }} onClick={() => setSel(sel === l.id ? null : l.id)}>
+                    {l.name.toUpperCase().slice(0, 13)} {l.total}
+                  </text>
+                );
+              }
+              const on = sel === null || g.members.some((m) => m.id === sel);
               return (
-                <text key={l.id} x={W - PAD_R + 10} y={(endLabels[l.id] ?? y(l.total)) + 3}
-                  fontSize={10} fill={l.col} opacity={on ? 1 : 0.2} letterSpacing=".08em"
-                  style={{ cursor: "pointer" }} onClick={() => setSel(sel === l.id ? null : l.id)}>
-                  {l.name.toUpperCase().slice(0, 13)} {l.total}
+                <text key={`tied-${g.total}`} x={W - PAD_R + 10} y={g.yy + 3}
+                  fontSize={10} fill="var(--faint)" opacity={on ? 1 : 0.2} letterSpacing=".08em">
+                  {g.members.length} TIED · {g.total}
                 </text>
               );
             })}
