@@ -6,6 +6,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import DecryptField from "@/components/DecryptField";
 import ThemeToggle from "@/components/ThemeToggle";
+import VaultDoor from "@/components/VaultDoor";
 
 export default function EntryScreen() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function EntryScreen() {
   const [err, setErr] = useState("");
   const [unconfirmed, setUnconfirmed] = useState(false);
   const [note, setNote] = useState("");
+  const [opening, setOpening] = useState(false);
 
   // the callback bounces here after a confirm link is spent
   useEffect(() => {
@@ -41,8 +43,9 @@ export default function EntryScreen() {
       }
       return;
     }
-    router.push("/dashboard/leaderboard");
-    router.refresh();
+    // the doors part, then the board is behind them
+    setOpening(true);
+    setTimeout(() => { router.push("/dashboard/leaderboard"); router.refresh(); }, 1150);
   }
 
   async function resend() {
@@ -60,8 +63,11 @@ export default function EntryScreen() {
   return (
     <main style={{ minHeight: "100vh", display: "grid", placeItems: "center", padding: 24, position: "relative" }}>
       <DecryptField />
+      <VaultDoor open={opening} />
       <div style={{ position: "fixed", top: 16, right: 18, zIndex: 3 }}><ThemeToggle /></div>
-      <div className="glass-card" style={{ width: "100%", maxWidth: 340, position: "relative", zIndex: 2, background: "var(--void)", border: "1px solid var(--line)", padding: 26 }}>
+      <div className="glass-card" style={{ width: "100%", maxWidth: 340, position: "relative", zIndex: 60,
+        opacity: opening ? 0 : 1, transform: opening ? "scale(.97)" : "none",
+        transition: "opacity .35s ease, transform .35s ease", pointerEvents: opening ? "none" : "auto", background: "var(--void)", border: "1px solid var(--line)", padding: 26 }}>
         <div className="lbl-hot" style={{ marginBottom: 6 }}>ENTR</div>
         <div style={{ fontSize: 26, letterSpacing: ".2em", marginBottom: 26 }}>CIPHER</div>
         <form onSubmit={enter} style={{ display: "flex", flexDirection: "column", gap: 13 }}>
