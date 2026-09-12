@@ -13,7 +13,10 @@ import BadgeGlyph from "./BadgeGlyph";
  */
 
 /** Marks with rendered art in /public/badges. Add a code here when its PNG lands. */
-const ART = new Set(["FRST", "HEVY", "POLY", "RLNT", "OPEN", "APEX"]);
+const ART = new Set([
+  "FRST", "HEVY", "POLY", "RLNT", "OPEN",
+  "SPTL", "ARCV", "CENT", "KILL", "STK30", "APEX",
+]);
 
 const ALLOY: Record<number, { hi: string; mid: string; lo: string; rim: string }> = {
   1: { hi: "#d8c9b4", mid: "#9a8468", lo: "#4a3d2e", rim: "#c2ab8a" }, // bronze

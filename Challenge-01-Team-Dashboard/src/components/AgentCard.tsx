@@ -38,7 +38,7 @@ export default function AgentCard({
       <div style={{ padding: compact ? "14px 16px 12px 18px" : "18px 20px 16px 22px", position: "relative" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
           <div style={{ display: "flex", gap: 13, minWidth: 0 }}>
-            <AgentSigil id={id} col={div.col} size={compact ? 62 : 78} live={(points ?? 0) > 0 || role === "core"} />
+            <AgentSigil id={id} name={name} col={div.col} size={compact ? 62 : 78} live={(points ?? 0) > 0 || role === "core"} />
             <div style={{ minWidth: 0 }}>
             <div className="lbl-faint" style={{ fontSize: 8, marginBottom: 5 }}>AGENT</div>
             <div style={{

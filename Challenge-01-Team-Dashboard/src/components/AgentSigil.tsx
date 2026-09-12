@@ -15,9 +15,9 @@ function rng(seed: string) {
 }
 
 export default function AgentSigil({
-  id, col = "var(--hot)", size = 92, live = true,
-}: { id: string; col?: string; size?: number; live?: boolean }) {
-  const art = avatarOf(id);
+  id, col = "var(--hot)", size = 92, live = true, name,
+}: { id: string; col?: string; size?: number; live?: boolean; name?: string }) {
+  const art = avatarOf(id, name);
   if (art) {
     return (
       <div style={{ position: "relative", width: size, height: size, overflow: "hidden", flexShrink: 0, background: "var(--void)" }}>

@@ -157,7 +157,7 @@ export default function FileScreen() {
           borderRight: "1px solid var(--line-2)", overflow: "hidden",
           background: `radial-gradient(90% 70% at 50% 62%, ${div.col}14, transparent 70%)`,
         }}>
-          <AgentFigure id={profile.id} col={div.col} height={330} live={total > 0 || profile.role === "core"} />
+          <AgentFigure id={profile.id} name={profile.full_name} col={div.col} height={330} live={total > 0 || profile.role === "core"} />
           <div className="lbl-faint" style={{ position: "absolute", bottom: 12, fontSize: 8, letterSpacing: ".3em" }}>
             {total > 0 ? "ACTIVE" : "STANDING BY"}
           </div>

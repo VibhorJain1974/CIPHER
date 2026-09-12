@@ -70,7 +70,7 @@ export default function CrewDossier({
         {/* portrait plate */}
         <span className="dcard-plate" style={{ background: `radial-gradient(85% 70% at 50% 34%, ${div.col}18, var(--void) 74%)` }}>
           <span className="dcard-scan" />
-          <span className="dcard-sigil"><AgentSigil id={id} col={div.col} size={150} live={live} /></span>
+          <span className="dcard-sigil"><AgentSigil id={id} name={name} col={div.col} size={150} live={live} /></span>
           <span className="dcard-scrim" />
           <span className="dcard-plate-edge" style={{ borderColor: `${div.col}66` }} />
 

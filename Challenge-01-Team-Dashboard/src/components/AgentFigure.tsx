@@ -17,9 +17,9 @@ function rng(seed: string) {
 const poly = (pts: number[][]) => pts.map((p) => p.join(",")).join(" ");
 
 export default function AgentFigure({
-  id, col = "var(--hot)", height = 320, live = true,
-}: { id: string; col?: string; height?: number; live?: boolean }) {
-  const art = avatarOf(id);
+  id, col = "var(--hot)", height = 320, live = true, name,
+}: { id: string; col?: string; height?: number; live?: boolean; name?: string }) {
+  const art = avatarOf(id, name);
   if (art) {
     const w = Math.round(height * 0.72);
     return (
