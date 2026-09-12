@@ -20,7 +20,7 @@ export default function EntryScreen() {
 
   // the board is prefetched while they type, so the doors are not left
   // standing open on an empty screen while Next fetches the route
-  useEffect(() => { router.prefetch("/dashboard/leaderboard"); }, [router]);
+  useEffect(() => { router.prefetch("/dashboard/home"); }, [router]);
 
   // the callback bounces here after a confirm link is spent
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function EntryScreen() {
     // session cookie is already in place from signInWithPassword, so push()
     // alone lands on an authenticated render.
     setOpening(true);
-    setTimeout(() => { router.push("/dashboard/leaderboard"); }, 1150);
+    setTimeout(() => { router.push("/dashboard/home"); }, 1150);
   }
 
   async function resend() {

@@ -6,6 +6,7 @@ import Chat from "@/components/Chat";
 import type { Profile } from "@/lib/types";
 
 const NAV = [
+  { key: "HOME", href: "/dashboard/home",        clearance: "all" },
   { key: "RANK", href: "/dashboard/leaderboard", clearance: "all" },
   { key: "ARCS", href: "/dashboard/arcs",        clearance: "all" },
   { key: "NODE", href: "/dashboard",             clearance: "logger" },

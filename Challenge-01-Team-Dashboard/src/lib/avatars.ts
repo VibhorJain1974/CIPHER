@@ -53,3 +53,33 @@ export function figureOf(id: string, name?: string): string | null {
   if (!slug) return null;
   return FULL.has(slug) ? `/avatars/${slug}-full.png` : `/avatars/${slug}.png`;
 }
+
+/**
+ * Real photos, kept apart from the illustrated set on purpose. The team home
+ * page wants an actual face; everywhere else — passes, crew cards, the
+ * dossier, the badge ceremony — keeps the sci-fi armor art from avatarOf()
+ * and figureOf() until that decision changes. Add a member here as their
+ * real photo comes in; nothing else has to move for it to show up.
+ */
+const REAL_PHOTO = new Set([
+  "tavishi", "harsh", "vibbhor", "ridhi", "ebnay",
+  "apurva", "tanvi", "anushka", "kartik",
+]);
+
+/** A real photo for the team home grid, or null to fall back to avatarOf(). */
+export function realPhotoOf(id: string, name?: string): string | null {
+  const slug = slugFor(id, name);
+  return slug && REAL_PHOTO.has(slug) ? `/avatars/real/${slug}.jpg` : null;
+}
+
+/**
+ * Members whose real photo is known to be on the way but isn't in yet — the
+ * team home page shows a "coming soon" tile for these instead of quietly
+ * falling back to the armor art, so it reads as pending rather than done.
+ */
+const PHOTO_PENDING = new Set(["manthan"]);
+
+export function photoPending(id: string, name?: string): boolean {
+  const slug = slugFor(id, name);
+  return !!slug && PHOTO_PENDING.has(slug);
+}

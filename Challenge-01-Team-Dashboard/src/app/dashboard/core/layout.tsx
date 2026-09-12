@@ -15,7 +15,7 @@ export default async function CoreLayout({ children }: { children: React.ReactNo
   const { data: profile } = await supabase
     .from("profiles").select("role").eq("id", user.id).maybeSingle();
 
-  if (profile?.role !== "core") redirect("/dashboard/leaderboard");
+  if (profile?.role !== "core") redirect("/dashboard/home");
 
   return <>{children}</>;
 }

@@ -59,7 +59,7 @@ export default function InitScreen() {
       // With confirmation switched off the session lands immediately and the
       // member walks straight in. With it on, they get told exactly what to do.
       if (signUp.session) {
-        router.push("/dashboard/leaderboard");
+        router.push("/dashboard/home");
         router.refresh();
         return;
       }

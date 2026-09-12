@@ -26,7 +26,7 @@ export default function EnrolScreen() {
       if (!data.user) { router.replace("/login"); return; }
       setEmail(data.user.email ?? "");
       const { data: p } = await supabase.from("profiles").select("id").eq("id", data.user.id).maybeSingle();
-      if (p) router.replace("/dashboard/leaderboard");
+      if (p) router.replace("/dashboard/home");
     })();
   }, [router]);
 
@@ -51,7 +51,7 @@ export default function EnrolScreen() {
         const { error: cErr } = await supabase.rpc("claim_role", { p_code: code.trim() });
         if (cErr) throw cErr;
       }
-      router.replace("/dashboard/leaderboard");
+      router.replace("/dashboard/home");
       router.refresh();
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Something went wrong. Try again.");
