@@ -51,7 +51,7 @@
   --ember:   #8c2c07;
   --void-hot:#fdeee7;
 
-  --noise:   #a49c8c;
+  --noise:   #b3ab9e;
   --mesh:    rgba(0,0,0,.028);
 
   --grid-0:  #d8d3c9;
@@ -167,3 +167,188 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--h
 /* theme switch should not flash or animate the whole page */
 html { color-scheme: dark; }
 html[data-theme="light"] { color-scheme: light; }
+
+/* ── crew dossier card ──────────────────────────────────────────
+   Resting, it is a portrait and three numbers. Hovering glitches once,
+   then the card grows out of its grid cell and deals the dossier section
+   by section. It overflows its slot rather than pushing the grid, so
+   nothing reflows under the cursor.
+   ---------------------------------------------------------------- */
+.crew-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.dcard-slot { position: relative; height: 430px; }
+.crew-grid:has(.dcard-slot:hover) .dcard-slot:not(:hover) .dcard { opacity: .3; filter: saturate(.35); }
+
+.dcard {
+  position: absolute; inset: 0; display: block; overflow: hidden; isolation: isolate;
+  background: var(--void); border: 1px solid var(--line); border-left-width: 2px;
+  color: inherit; cursor: pointer;
+  transition: height .42s cubic-bezier(.2,.85,.2,1), width .42s cubic-bezier(.2,.85,.2,1),
+              border-color .3s ease, opacity .3s ease, filter .3s ease, box-shadow .3s ease;
+}
+.dcard:hover, .dcard:focus-visible {
+  height: 660px; width: 112%; z-index: 40;
+  border-color: var(--dimmer); box-shadow: 0 30px 70px rgba(0,0,0,.66);
+}
+
+/* one glitch frame before it opens */
+.dcard-glitch { position: absolute; inset: 0; z-index: 20; opacity: 0; pointer-events: none; background: var(--panel); mix-blend-mode: overlay; }
+@keyframes dGlitch { 0% { opacity: .9; transform: translateX(0) } 34% { opacity: .55; transform: translateX(-4px) } 68% { opacity: .8; transform: translateX(3px) } 100% { opacity: 0 } }
+.dcard:hover .dcard-glitch { animation: dGlitch .16s steps(2,end) 1; }
+
+.dcard-bg { position: absolute; inset: 0; z-index: 0; opacity: 0; transition: opacity .5s ease; pointer-events: none; }
+.dcard:hover .dcard-bg { opacity: 1; }
+.dcard-dots { position: absolute; inset: 0; background-image: radial-gradient(circle at 2px 2px, rgba(255,74,18,.10) 1px, transparent 1.4px); background-size: 16px 16px; }
+.dcard-rain { position: absolute; inset: 0; font-size: 9px; line-height: 12px; color: rgba(255,74,18,.05); white-space: pre; overflow: hidden; letter-spacing: 1px; user-select: none; }
+
+.dcard-brk { position: absolute; width: 13px; height: 13px; border: 1px solid; opacity: .5; z-index: 6; transition: all .4s ease-out; }
+.dcard-brk.tl { top: 6px; left: 6px; border-right: none; border-bottom: none; }
+.dcard-brk.tr { top: 6px; right: 6px; border-left: none; border-bottom: none; }
+.dcard-brk.bl { bottom: 6px; left: 6px; border-right: none; border-top: none; }
+.dcard-brk.br { bottom: 6px; right: 6px; border-left: none; border-top: none; }
+.dcard:hover .dcard-brk { width: 20px; height: 20px; opacity: 1; }
+
+.dcard-chrome { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: flex-start; padding: 11px 13px; z-index: 10; }
+.dcard-logo { display: flex; align-items: center; gap: 6px; font-size: 10px; letter-spacing: .2em; font-weight: 600; }
+.dcard-mark { width: 8px; height: 8px; border: 1px solid; transform: rotate(45deg); }
+.dcard-clr { font-size: 8px; letter-spacing: .14em; border: 1px solid var(--line); color: var(--faint); padding: 3px 6px; }
+
+.dcard-plate { position: relative; display: block; height: 254px; overflow: hidden; border-bottom: 1px solid var(--line); transition: height .42s ease-out; }
+.dcard:hover .dcard-plate { height: 214px; }
+.dcard-sigil { position: absolute; inset: 0; display: grid; place-items: center; padding-bottom: 58px; }
+.dcard-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 38%, var(--void) 100%); }
+.dcard-plate-edge { position: absolute; inset: 0; border: 1px solid; pointer-events: none; }
+
+@keyframes dSweep { 0% { opacity: 0; top: -22% } 12% { opacity: 1 } 88% { opacity: 1 } 100% { opacity: 0; top: 106% } }
+.dcard-scan { position: absolute; left: 0; right: 0; top: -12%; height: 26%; z-index: 5; pointer-events: none; opacity: 0;
+  background: linear-gradient(180deg, transparent, rgba(255,74,18,.18), transparent); }
+.dcard:hover .dcard-scan { animation: dSweep 1.5s ease-in-out 1; }
+
+.dcard-idblock { position: absolute; left: 14px; right: 14px; bottom: 26px; z-index: 3; display: block; }
+.dcard-node { display: block; font-size: 8px; letter-spacing: .2em; margin-bottom: 5px; }
+.dcard-name { display: block; font-size: 17px; font-weight: 600; letter-spacing: .05em; color: var(--bone); line-height: 1.15; }
+.dcard-tags { display: flex; gap: 5px; margin-top: 8px; flex-wrap: wrap; }
+.dcard-tag { font-size: 7.5px; letter-spacing: .12em; border: 1px solid var(--line); padding: 3px 5px; color: var(--faint); }
+
+.dcard-pulse { position: absolute; bottom: 7px; left: 14px; right: 14px; height: 15px; opacity: .8; }
+.dcard-pulse svg { width: 100%; height: 100%; }
+.dcard-pulse path { stroke-dasharray: 120; animation: dHb 2.6s linear infinite; }
+@keyframes dHb { to { stroke-dashoffset: -240 } }
+
+.dcard-strip { position: absolute; left: 0; right: 0; bottom: 25px; display: flex; border-top: 1px solid var(--line); background: var(--void); z-index: 4; transition: opacity .22s ease; }
+.dcard:hover .dcard-strip { opacity: 0; pointer-events: none; }
+.dcard-cell { flex: 1; text-align: center; padding: 9px 4px; border-right: 1px solid var(--line-2); }
+.dcard-cell:last-child { border-right: none; }
+.dcard-cl { display: block; font-size: 7px; letter-spacing: .16em; color: var(--faint); }
+.dcard-cv { display: block; font-size: 13px; font-variant-numeric: tabular-nums; color: var(--bone); margin-top: 3px; }
+
+.dcard-hint { position: absolute; bottom: 0; left: 0; right: 0; text-align: center; font-size: 8px; letter-spacing: .2em; color: var(--faint); padding: 6px 0; border-top: 1px solid var(--line); background: var(--panel-2); z-index: 4; transition: opacity .25s ease; }
+.dcard:hover .dcard-hint { opacity: 0; }
+
+.dcard-body { position: relative; z-index: 2; display: block; height: 0; opacity: 0; overflow: hidden; padding: 0 15px; transition: opacity .3s ease .14s; }
+.dcard:hover .dcard-body { height: calc(660px - 214px); opacity: 1; overflow-y: auto; padding-bottom: 16px; }
+.dcard-body::-webkit-scrollbar { width: 3px; }
+
+@keyframes dReveal { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
+.dcard-sec { display: block; margin-top: 15px; opacity: 0; }
+.dcard:hover .dcard-sec { animation: dReveal .46s ease forwards; }
+.dcard-sect { display: flex; align-items: center; gap: 8px; font-size: 8.5px; letter-spacing: .26em; color: var(--hot); margin-bottom: 9px; }
+.dcard-sect::before { content: "//"; color: var(--line); }
+.dcard-sect::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+.dcard-grid { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); }
+.dcard-f { display: block; padding: 7px 9px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.dcard-f:nth-child(even) { border-right: none; }
+.dcard-f:nth-last-child(-n+2) { border-bottom: none; }
+.dcard-fk { display: block; font-size: 7px; letter-spacing: .14em; color: var(--faint); }
+.dcard-fv { display: block; font-size: 10.5px; color: var(--bone); margin-top: 3px; letter-spacing: .04em; }
+
+.dcard-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.dcard-st { display: block; background: var(--void); padding: 9px 5px; text-align: center; }
+.dcard-stn { display: block; font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.dcard-stl { display: block; font-size: 6.5px; letter-spacing: .12em; color: var(--faint); margin-top: 4px; line-height: 1.4; }
+
+.dcard-bar { display: block; margin-bottom: 8px; }
+.dcard-barhead { display: flex; justify-content: space-between; font-size: 8.5px; letter-spacing: .1em; color: var(--dim); margin-bottom: 3px; }
+.dcard-bartrack { display: block; height: 5px; background: var(--panel-2); border: 1px solid var(--line); overflow: hidden; }
+.dcard-barfill { display: block; height: 100%; width: 0; }
+.dcard:hover .dcard-barfill { transition: width .9s cubic-bezier(.2,.8,.2,1) .35s; }
+
+.dcard-tl { display: block; position: relative; padding-left: 16px; }
+.dcard-tl::before { content: ""; position: absolute; left: 3px; top: 3px; bottom: 3px; width: 1px; background: linear-gradient(var(--hot), var(--line)); }
+.dcard-tle { display: block; position: relative; padding-bottom: 11px; }
+.dcard-tle::before { content: ""; position: absolute; left: -16px; top: 3px; width: 7px; height: 7px; background: var(--void); border: 1px solid var(--dot, var(--hot)); transform: rotate(45deg); }
+.dcard-tld { display: block; font-size: 7px; letter-spacing: .14em; color: var(--faint); }
+.dcard-tll { display: block; font-size: 9.5px; color: var(--bone); letter-spacing: .04em; margin-top: 3px; }
+
+.dcard-medals { display: flex; flex-wrap: wrap; gap: 9px; }
+.dcard-medal { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.dcard-medal-l { font-size: 6.5px; letter-spacing: .16em; color: var(--faint); }
+
+.dcard-empty { display: block; font-size: 9px; letter-spacing: .1em; color: var(--dimmer); line-height: 1.8; }
+
+.dcard-verify { display: flex; gap: 12px; align-items: center; border: 1px solid var(--line); padding: 11px; }
+.dcard-fp { width: 50px; height: 50px; flex-shrink: 0; }
+.dcard-fp svg { width: 100%; height: 100%; }
+.dcard-vtext { flex: 1; font-size: 7.5px; letter-spacing: .1em; color: var(--faint); line-height: 1.95; }
+.dcard-vtext b { color: var(--bone); font-weight: 500; }
+.dcard-bars { display: flex; align-items: flex-end; gap: 1px; height: 20px; margin-top: 10px; }
+.dcard-stamp { display: block; margin-top: 11px; text-align: center; font-size: 7px; letter-spacing: .28em; border: 1px solid; padding: 6px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .dcard, .dcard-plate, .dcard-body { transition: none; }
+  .dcard:hover .dcard-glitch, .dcard:hover .dcard-scan { animation: none; }
+  .dcard:hover .dcard-sec { animation: none; opacity: 1; }
+  .dcard-pulse path { animation: none; }
+}
+
+/* ── marks: the rack and the dealt card ─────────────────────────── */
+.mark-chip {
+  position: relative; width: 96px; height: 104px; padding: 9px 4px 7px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  border: 1px solid var(--line); cursor: pointer; overflow: hidden;
+  transition: transform .14s ease, border-color .14s ease, opacity .14s ease;
+}
+.mark-chip:hover { transform: translateY(-3px); opacity: 1 !important; border-color: var(--hot); }
+
+.mark-veil {
+  position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 22px;
+  background: color-mix(in srgb, var(--void) 86%, transparent);
+  backdrop-filter: blur(3px); animation: veilIn .18s ease-out;
+}
+@keyframes veilIn { from { opacity: 0 } to { opacity: 1 } }
+
+.mark-card {
+  position: relative; width: 100%; max-width: 372px; border: 2px solid var(--hot);
+  background: var(--void); box-shadow: 0 0 0 1px var(--void), 0 26px 70px rgba(0,0,0,.62);
+  animation: dealIn .34s cubic-bezier(.2,.9,.25,1);
+  max-height: 92vh; overflow-y: auto;
+}
+@keyframes dealIn {
+  from { opacity: 0; transform: translateY(26px) scale(.94) rotateX(9deg); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* the art breathes only when the mark is actually struck */
+@keyframes artFloat { 0%,100% { transform: translateY(-3px) } 50% { transform: translateY(3px) } }
+.mark-art-live { animation: artFloat 4.2s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mark-card { animation: none; }
+  .mark-art-live { animation: none; }
+  .mark-chip:hover { transform: none; }
+}
+
+/* ── dossier theatre ────────────────────────────────────────────── */
+.dossier-theatre {
+  display: grid;
+  grid-template-columns: minmax(240px, .95fr) minmax(220px, .85fr) minmax(280px, 1.2fr);
+}
+@media (max-width: 1100px) {
+  .dossier-theatre { grid-template-columns: 1fr; }
+  .dossier-theatre > * { border-right: none !important; border-bottom: 1px solid var(--line-2); }
+}
+
+/* the figure is read top to bottom, forever */
+@keyframes figScan { from { transform: translateY(0) } to { transform: translateY(310px) } }
+.fig-scan { animation: figScan 5.2s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .fig-scan { display: none; } }

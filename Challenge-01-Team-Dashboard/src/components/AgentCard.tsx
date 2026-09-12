@@ -1,6 +1,7 @@
 "use client";
 
 import { accessLevel, barcode, divisionOf, recordId, tierOf, type MemberRole } from "@/lib/types";
+import AgentSigil from "./AgentSigil";
 
 /**
  * The dossier card. Deliberately physical: a laminated pass, not a profile
@@ -36,7 +37,9 @@ export default function AgentCard({
 
       <div style={{ padding: compact ? "14px 16px 12px 18px" : "18px 20px 16px 22px", position: "relative" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
-          <div style={{ minWidth: 0 }}>
+          <div style={{ display: "flex", gap: 13, minWidth: 0 }}>
+            <AgentSigil id={id} col={div.col} size={compact ? 62 : 78} live={(points ?? 0) > 0 || role === "core"} />
+            <div style={{ minWidth: 0 }}>
             <div className="lbl-faint" style={{ fontSize: 8, marginBottom: 5 }}>AGENT</div>
             <div style={{
               fontSize: compact ? 17 : 23, letterSpacing: ".07em", color: "var(--bone)",
@@ -45,6 +48,7 @@ export default function AgentCard({
             <div style={{ display: "flex", alignItems: "center", gap: 7, marginTop: 7 }}>
               <span style={{ color: div.col, fontSize: 12, lineHeight: 1 }}>{div.glyph}</span>
               <span className="lbl" style={{ fontSize: 9, color: div.col }}>{div.name}</span>
+            </div>
             </div>
           </div>
 

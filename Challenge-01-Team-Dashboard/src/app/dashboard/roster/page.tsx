@@ -3,26 +3,33 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { divisionOf, nodeColour, sprintWeeks, tierOf, type Profile, type TeamProgressRow } from "@/lib/types";
+import { sprintWeeks, type Profile, type TeamProgressRow } from "@/lib/types";
 import { ranks } from "@/lib/glyphs";
 import AgentCard from "@/components/AgentCard";
+import CrewDossier, { type CrewEntry } from "@/components/CrewDossier";
+import { badgesFor } from "@/lib/badges";
 
 interface Weekly { member_id: string; week_index: number; points: number }
+interface LogRow extends CrewEntry { member_id: string; rule_code: string | null }
 
 export default function CrewScreen() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [prog, setProg] = useState<TeamProgressRow[]>([]);
   const [weekly, setWeekly] = useState<Weekly[]>([]);
+  const [log, setLog] = useState<LogRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const supabase = createClient();
     (async () => {
-      const [{ data: p }, { data: g }, { data: w }] = await Promise.all([
+      const [{ data: p }, { data: g }, { data: w }, { data: l }] = await Promise.all([
         supabase.from("profiles").select("*"),
         supabase.from("team_progress").select("*").order("total_points", { ascending: false }),
         supabase.from("weekly_yield").select("*"),
+        supabase.from("verified_log").select("member_id, title, category, rule_code, achievement_date, points")
+          .order("achievement_date", { ascending: false }),
       ]);
+      setLog((l as LogRow[]) ?? []);
       setProfiles((p as Profile[]) ?? []);
       setProg((g as TeamProgressRow[]) ?? []);
       setWeekly((w as Weekly[]) ?? []);
@@ -76,58 +83,40 @@ export default function CrewScreen() {
             </div>
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 14 }}>
+          <div className="crew-grid">
             {field.map((m, i) => {
-              const tier = tierOf(Number(m.total_points));
-              const div = divisionOf(m.department);
-              const col = Number(m.total_points) > 0 ? div.col : nodeColour(i);
-              const above = i > 0 ? Number(field[i - 1].total_points) : null;
               const series = Array.from({ length: weeks }, (_, w) =>
                 weekly.filter((x) => x.member_id === m.member_id && x.week_index === w)
                   .reduce((s, x) => s + x.points, 0));
-              const peak = Math.max(...series, 1);
+              const prof = profiles.find((p) => p.id === m.member_id);
+              const mine = log.filter((r) => r.member_id === m.member_id);
+              const pts = Number(m.total_points);
+              const badges = badgesFor({
+                entries: mine.map((r) => ({
+                  points: r.points, category: r.category,
+                  rule_code: r.rule_code, achievement_date: r.achievement_date,
+                })),
+                total: pts,
+                voided: 0,
+                isTop: pts > 0 && pts === Number(field[0].total_points),
+              });
               return (
-                <Link key={m.member_id} href={`/dashboard/profile/${m.member_id}`} className="panel"
-                  style={{ padding: 15, color: "inherit", display: "block", borderLeft: `2px solid ${col}` }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 3 }}>
-                    <span className="lbl val" style={{ color: place[i] === 1 ? "var(--hot)" : "var(--faint)" }}>
-                      {String(place[i]).padStart(2, "0")}
-                    </span>
-                    <span className="lbl val" style={{ fontSize: 9, color: tier.col }}>{tier.code}</span>
-                  </div>
-                  <div style={{ fontSize: 14, letterSpacing: ".06em", color: "var(--bone)", marginBottom: 2 }}>
-                    {m.full_name.toUpperCase()}
-                  </div>
-                  <div className="lbl-faint" style={{ fontSize: 9, marginBottom: 13 }}>
-                    <span style={{ color: div.col }}>{div.glyph} {div.code}</span> · {(m.department || "—").toUpperCase()}
-                  </div>
-
-                  <div style={{ display: "flex", alignItems: "flex-end", gap: 2, height: 34, marginBottom: 11 }}>
-                    {series.map((v, w) => (
-                      <span key={w} title={`W${w + 1} · ${v}`} style={{
-                        flex: 1, height: `${Math.max(2, (v / peak) * 100)}%`,
-                        background: v === 0 ? "var(--line)" : w >= weeks - 2 ? col : "var(--dimmer)",
-                      }} />
-                    ))}
-                  </div>
-
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                    <div>
-                      <div className="lbl-faint" style={{ fontSize: 9 }}>
-                        {m.verified_count} DECRYPTED
-                        {Number(m.pending_count) > 0 && <span style={{ color: "var(--hot)" }}> · {m.pending_count} HELD</span>}
-                      </div>
-                      <div className="lbl val" style={{ fontSize: 9, marginTop: 3, color: above === null ? "var(--bone)" : "var(--hot)" }}>
-                        {above === null || above === Number(m.total_points)
-                          ? `HOLDING ${String(place[i]).padStart(2, "0")}`
-                          : `−${above - Number(m.total_points)} TO ${String(place[i] - 1).padStart(2, "0")}`}
-                      </div>
-                    </div>
-                    <span className="val" style={{ fontSize: 30, lineHeight: 1, color: Number(m.total_points) ? "var(--hot)" : "var(--dimmer)" }}>
-                      {m.total_points}
-                    </span>
-                  </div>
-                </Link>
+                <CrewDossier
+                  key={m.member_id}
+                  id={m.member_id}
+                  name={m.full_name}
+                  department={m.department}
+                  role={prof?.role ?? "member"}
+                  locked={prof?.locked ?? false}
+                  points={pts}
+                  rank={place[i]}
+                  verified={Number(m.verified_count)}
+                  held={Number(m.pending_count)}
+                  marks={badges.filter((b) => b.earned).length}
+                  badges={badges}
+                  entries={mine}
+                  series={series}
+                />
               );
             })}
           </div>

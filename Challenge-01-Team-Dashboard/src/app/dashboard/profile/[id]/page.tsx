@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { divisionOf, sizeFor, sprintWeeks, tierOf, type Profile, type TeamProgressRow } from "@/lib/types";
+import { accessLevel, barcode, divisionOf, recordId, sizeFor, sprintWeeks, tierOf, type Profile, type TeamProgressRow } from "@/lib/types";
 import { badgesFor, radarAxes } from "@/lib/badges";
-import AgentCard from "@/components/AgentCard";
+import AgentFigure from "@/components/AgentFigure";
 import Radar from "@/components/Radar";
 import BadgeWall from "@/components/BadgeWall";
 
@@ -75,6 +75,7 @@ export default function FileScreen() {
   const total = Number(prog?.total_points ?? 0);
   const tier = tierOf(total);
   const div = divisionOf(profile.department);
+  const lvl = accessLevel(profile.role, profile.locked);
   const series = Array.from({ length: weeks }, (_, w) =>
     weekly.filter((x) => x.week_index === w).reduce((s, x) => s + x.points, 0));
   const peak = Math.max(...series, 1);
@@ -84,7 +85,7 @@ export default function FileScreen() {
     points: r.points, category: r.category, rule_code: r.rule_code, achievement_date: r.achievement_date,
   }));
   const badges = badgesFor({ entries, total, voided, isTop });
-  const axes = radarAxes({ entries, total });
+  const axes = radarAxes({ entries });
   const share = teamTotal > 0 ? (total / teamTotal) * 100 : 0;
 
   return (
@@ -94,21 +95,85 @@ export default function FileScreen() {
         <span className="lbl-faint">{own ? "EDIT YOUR OWN ENTRIES FROM NODE" : "VIEWING IS LOGGED"}</span>
       </div>
 
-      {/* ── card + instrument ─────────────────────────────────────── */}
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(280px, 1.05fr) minmax(260px, .95fr)", gap: 16, alignItems: "stretch" }}>
-        <AgentCard
-          name={profile.full_name} department={profile.department}
-          role={profile.role} locked={profile.locked} id={profile.id}
-          points={total} rank={rank}
-        />
+      {/* ── theatre: who they are, what they look like, how they earn ── */}
+      <div className="panel dossier-theatre">
+        {/* identity */}
+        <div style={{ padding: 20, borderRight: "1px solid var(--line-2)", display: "flex", flexDirection: "column", gap: 16 }}>
+          <div>
+            <div className="lbl-faint" style={{ fontSize: 8, marginBottom: 6 }}>AGENT</div>
+            <div style={{ fontSize: 26, letterSpacing: ".07em", color: "var(--bone)", lineHeight: 1.15, wordBreak: "break-word" }}>
+              {profile.full_name.toUpperCase()}
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 7, marginTop: 8 }}>
+              <span style={{ color: div.col, fontSize: 13, lineHeight: 1 }}>{div.glyph}</span>
+              <span className="lbl" style={{ fontSize: 9, color: div.col }}>{div.name}</span>
+            </div>
+          </div>
 
-        <div className="panel" style={{ padding: 16, display: "flex", flexDirection: "column" }}>
+          <div>
+            <div className="lbl-faint" style={{ fontSize: 8, marginBottom: 6 }}>CLEARANCE</div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 9 }}>
+              <span className="val" style={{ fontSize: 28, lineHeight: 1, color: lvl >= 4 ? "var(--hot)" : lvl === 3 ? "var(--bone)" : "var(--dim)" }}>{lvl}</span>
+              <span className="lbl-faint" style={{ fontSize: 9 }}>
+                {profile.role === "core" ? "COMMAND" : profile.role === "judge" ? "OBSERVER" : "FIELD"}
+              </span>
+            </div>
+            <div style={{ display: "flex", gap: 4, marginTop: 9 }}>
+              {[1, 2, 3, 4, 5].map((i) => (
+                <span key={i} style={{
+                  width: 15, height: 4,
+                  background: i <= lvl ? (lvl >= 4 ? "var(--hot)" : div.col) : "var(--line)",
+                }} />
+              ))}
+            </div>
+          </div>
+
+          <div className="rule" />
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+            <Row k="RECORD" v={recordId(profile.id)} />
+            <Row k="UNIT" v={`CIPHER / ${div.code}`} />
+            <Row k="STANDING" v={rank ? `${tier.code} · ${String(rank).padStart(2, "0")}` : tier.code} hot />
+            <Row k="WINDOW" v="01.09 . 15.11" />
+          </div>
+
+          <div>
+            <div style={{ display: "flex", alignItems: "flex-end", gap: 1, height: 22 }}>
+              {barcode(profile.id, 40).map((w, i) => (
+                <span key={i} style={{
+                  width: w, height: "100%",
+                  background: i % 5 === 0 ? div.col : "var(--dimmer)",
+                  opacity: i % 3 === 0 ? 0.9 : 0.42,
+                }} />
+              ))}
+            </div>
+            <div className="lbl-faint" style={{ fontSize: 7, marginTop: 5, letterSpacing: ".3em" }}>SEALED</div>
+          </div>
+        </div>
+
+        {/* the figure */}
+        <div style={{
+          display: "grid", placeItems: "center", padding: "18px 10px", position: "relative",
+          borderRight: "1px solid var(--line-2)", overflow: "hidden",
+          background: `radial-gradient(90% 70% at 50% 62%, ${div.col}14, transparent 70%)`,
+        }}>
+          <AgentFigure id={profile.id} col={div.col} height={330} live={total > 0 || profile.role === "core"} />
+          <div className="lbl-faint" style={{ position: "absolute", bottom: 12, fontSize: 8, letterSpacing: ".3em" }}>
+            {total > 0 ? "ACTIVE" : "STANDING BY"}
+          </div>
+        </div>
+
+        {/* the instrument */}
+        <div style={{ padding: 16, display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
             <span className="lbl">SHAPE</span>
             <span className="lbl-faint">{total > 0 ? "READING" : "AT REST"}</span>
           </div>
-          <div style={{ display: "grid", placeItems: "center", flex: 1, minHeight: 210 }}>
+          <div style={{ display: "grid", placeItems: "center", flex: 1, minHeight: 250 }}>
             <Radar axes={axes} col={div.col} />
+          </div>
+          <div className="lbl-faint" style={{ fontSize: 8, lineHeight: 1.8, marginTop: 4 }}>
+            EACH AXIS IS REAL POINTS BANKED IN THAT PART OF THE CODEX
           </div>
         </div>
       </div>
@@ -123,7 +188,7 @@ export default function FileScreen() {
         <Stat label="MARKS" value={`${badges.filter((b) => b.earned).length}/${badges.length}`} />
       </div>
 
-      <BadgeWall badges={badges} />
+      <BadgeWall badges={badges} col={div.col} />
 
       {/* ── yield ─────────────────────────────────────────────────── */}
       <div className="panel" style={{ padding: 18 }}>
@@ -150,7 +215,7 @@ export default function FileScreen() {
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
           <span className="lbl">SHARE OF TEAM TOTAL</span>
           <span className="lbl-faint">
-            {teamTotal > 0 ? `${total} OF ${teamTotal} TEAM POINTS` : "TEAM IS ON ZERO — NOTHING TO SPLIT YET"}
+            {teamTotal > 0 ? `${total} OF ${teamTotal} TEAM POINTS` : "TEAM IS ON ZERO, NOTHING TO SPLIT YET"}
           </span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
@@ -194,6 +259,15 @@ export default function FileScreen() {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function Row({ k, v, hot }: { k: string; v: string; hot?: boolean }) {
+  return (
+    <div style={{ display: "flex", justifyContent: "space-between", gap: 10, alignItems: "baseline" }}>
+      <span className="lbl-faint" style={{ fontSize: 8 }}>{k}</span>
+      <span className="val" style={{ fontSize: 10, letterSpacing: ".06em", color: hot ? "var(--hot)" : "var(--bone)" }}>{v}</span>
     </div>
   );
 }
