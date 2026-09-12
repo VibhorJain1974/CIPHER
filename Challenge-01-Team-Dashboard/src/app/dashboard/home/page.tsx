@@ -15,20 +15,43 @@ import { avatarOf, photoPending, realPhotoOf } from "@/lib/avatars";
 export default function TeamHomeScreen() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    createClient()
-      .from("profiles")
-      .select("*")
-      .order("full_name")
-      .then(({ data }) => {
+    let cancelled = false;
+    // wrapped in try/catch (rather than a .then/.catch chain) so a rejected
+    // promise — a network drop, not just a query error — still clears the
+    // loading state instead of leaving this screen stuck on "READING CREW…"
+    (async () => {
+      try {
+        const { data, error } = await createClient()
+          .from("profiles")
+          .select("*")
+          .order("full_name");
+        if (cancelled) return;
+        if (error) { setFailed(true); setLoading(false); return; }
         setProfiles((data as Profile[]) ?? []);
         setLoading(false);
-      });
+      } catch {
+        if (!cancelled) { setFailed(true); setLoading(false); }
+      }
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   if (loading) return <div className="lbl-faint">READING CREW…</div>;
 
+  if (failed) {
+    return (
+      <div className="lbl-faint" style={{ padding: "40px 0", textAlign: "center" }}>
+        Could not reach the crew list. Reload to try again.
+      </div>
+    );
+  }
+
+  // full_name/department come straight from the database — a blank row
+  // must render as a blank tile, never throw and take the whole screen
+  // down with it (see dashboard/error.tsx for the net if this ever slips).
   const visible = profiles.filter((p) => !p.hidden);
   const leads = visible.filter((p) => p.role === "core");
   const judges = visible.filter((p) => p.role === "judge");
@@ -71,9 +94,10 @@ function TeamRow({ title, people }: { title: string; people: Profile[] }) {
         gap: 18,
       }}>
         {people.map((p) => {
+          const name = (p.full_name ?? "").trim();
           const div = divisionOf(p.department);
-          const pending = photoPending(p.id, p.full_name);
-          const art = pending ? null : realPhotoOf(p.id, p.full_name) ?? avatarOf(p.id, p.full_name);
+          const pending = photoPending(p.id, name);
+          const art = pending ? null : realPhotoOf(p.id, name) ?? avatarOf(p.id, name);
           return (
             <Link
               key={p.id}
@@ -110,12 +134,12 @@ function TeamRow({ title, people }: { title: string; people: Profile[] }) {
                     width: "100%", height: "100%", display: "grid", placeItems: "center",
                     fontSize: 30, fontWeight: 700, color: div.col,
                   }}>
-                    {p.full_name.trim().charAt(0).toUpperCase()}
+                    {name ? name.charAt(0).toUpperCase() : "?"}
                   </div>
                 )}
               </div>
               <div style={{ padding: "10px 11px 13px" }}>
-                <div style={{ fontSize: 12, letterSpacing: ".04em" }}>{p.full_name.toUpperCase()}</div>
+                <div style={{ fontSize: 12, letterSpacing: ".04em" }}>{name ? name.toUpperCase() : "UNNAMED"}</div>
                 <div className="lbl-faint" style={{ fontSize: 9, marginTop: 3, color: div.col }}>
                   {p.department || div.code}
                 </div>
