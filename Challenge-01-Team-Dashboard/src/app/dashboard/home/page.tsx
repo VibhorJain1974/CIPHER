@@ -69,8 +69,7 @@ export default function TeamHomeScreen() {
           CIPHER
         </div>
         <div className="lbl-faint home-wordmark-sub" style={{ fontSize: 10, letterSpacing: ".24em" }}>
-          AARVAK · TECH SPRINT JOURNEY 2026
-  {"<!-- CIPHER{your_flag_here} -->"}          
+          AARVAK · TECH SPRINT JOURNEY 2026--CIPHERyour_flag_here          
         </div>
       </section>
 
