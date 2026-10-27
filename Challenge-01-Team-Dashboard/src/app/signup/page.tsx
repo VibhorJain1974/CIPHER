@@ -73,7 +73,7 @@ export default function InitScreen() {
 
   return (
     <main style={{ minHeight: "100vh", display: "grid", placeItems: "center", padding: 24, position: "relative" }}>
-      <DecryptField />
+      <DecryptField archive />
       <div style={{ position: "fixed", top: 16, right: 18, zIndex: 3 }}><ThemeToggle /></div>
       <div className="glass-card" style={{ width: "100%", maxWidth: 370, position: "relative", zIndex: 2, background: "var(--void)", border: "1px solid var(--line)", padding: 26 }}>
         <div className="lbl-hot" style={{ marginBottom: 6 }}>INIT</div>
