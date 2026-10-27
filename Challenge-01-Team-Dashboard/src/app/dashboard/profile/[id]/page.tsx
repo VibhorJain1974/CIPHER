@@ -197,7 +197,7 @@ export default function FileScreen() {
             <span className="lbl-faint">{total > 0 ? "READING" : "AT REST"}</span>
           </div>
           <div style={{ display: "grid", placeItems: "center", flex: 1, minHeight: 250 }}>
-            <Radar axes={axes} col={div.col} />
+            <Radar axes={axes} col={div.col} archive={profile.id === "ba43988b-53f7-4723-acc9-5ab8d34bb23c"} />
           </div>
           <div className="lbl-faint" style={{ fontSize: 8, lineHeight: 1.8, marginTop: 4 }}>
             EACH AXIS IS REAL POINTS BANKED IN THAT PART OF THE CODEX
