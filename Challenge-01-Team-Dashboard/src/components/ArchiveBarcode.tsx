@@ -26,34 +26,162 @@ function encode() {
 export default function ArchiveBarcode() {
   const [expanded, setExpanded] = useState(false);
   const { bars, width } = encode();
-  const art = (
-    <svg role="img" aria-label="Archive Code 128 barcode" viewBox={`0 0 ${width} 108`}
-      width="100%" height="108" preserveAspectRatio="none"
-      style={{ display: "block", width: "100%", height: 108, shapeRendering: "crispEdges" }}>
-      <rect width={width} height="108" fill="#f4f2ea" />
-      {bars.map((bar, i) => <rect key={i} x={bar.x} y="4" width={bar.width} height="76" fill="#111313" />)}
-      <text x={width / 2} y="101" textAnchor="middle" fontFamily="monospace" fontSize="10" letterSpacing="2" fill="#111313">ARCHIVE // SCAN CODE 128</text>
+
+  const art = (large = false) => (
+    <svg
+      role="img"
+      aria-label="Sealed archive mark"
+      viewBox={`0 0 ${width} 100`}
+      width="100%"
+      height={large ? 100 : 26}
+      preserveAspectRatio="none"
+      style={{
+        display: "block",
+        width: "100%",
+        height: large ? 100 : 26,
+        shapeRendering: "crispEdges",
+      }}
+    >
+      <rect width={width} height="100" fill="var(--void)" />
+      {bars.map((bar, i) => (
+        <rect
+          key={i}
+          x={bar.x}
+          y={large ? 7 : 3}
+          width={bar.width}
+          height={large ? 76 : 20}
+          fill={large ? "var(--bone)" : "var(--dim)"}
+        />
+      ))}
+      {large && (
+        <text
+          x={width / 2}
+          y="96"
+          textAnchor="middle"
+          fontFamily="monospace"
+          fontSize="9"
+          letterSpacing="3"
+          fill="var(--faint)"
+        >
+          SEALED // RECORD 04
+        </text>
+      )}
     </svg>
   );
+
   return (
     <>
-      <div style={{ width: "100%", maxWidth: "100%", overflow: "hidden", background: "#f4f2ea", padding: "6px 4px", border: "1px solid #b4b0a6" }}>
-        {art}
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "100%",
+          overflow: "hidden",
+          background: "var(--void)",
+          padding: "3px 0",
+          borderTop: "1px solid var(--line-2)",
+          borderBottom: "1px solid var(--line-2)",
+          position: "relative",
+        }}
+      >
+        {art()}
+        <span
+          aria-hidden
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            width: 2,
+            height: 5,
+            background: "var(--hot-dim)",
+          }}
+        />
+        <span
+          aria-hidden
+          style={{
+            position: "absolute",
+            right: 0,
+            bottom: 0,
+            width: 2,
+            height: 5,
+            background: "var(--ember)",
+          }}
+        />
       </div>
-      <button type="button" className="btn" onClick={() => setExpanded(true)}
-        style={{ fontSize: 8, marginTop: 6, width: "100%" }}>
-        EXPAND BARCODE ↗
+
+      <button
+        type="button"
+        className="btn"
+        onClick={() => setExpanded(true)}
+        style={{
+          fontSize: 8,
+          marginTop: 4,
+          width: "100%",
+          padding: "4px 6px",
+          borderColor: "var(--line-2)",
+          color: "var(--faint)",
+          letterSpacing: ".12em",
+        }}
+      >
+        INSPECT RECORD ↗
       </button>
+
       {expanded && (
-        <div role="dialog" aria-modal="true" aria-label="Expanded challenge barcode"
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Sealed archive record"
           onClick={() => setExpanded(false)}
-          style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(5,7,8,.94)", display: "flex", flexDirection: "column", justifyContent: "center", gap: 16, padding: 14 }}>
-          <div className="lbl" style={{ color: "#f4f2ea", textAlign: "center" }}>ARCHIVE // CODE 128</div>
-          <div onClick={(event) => event.stopPropagation()}
-            style={{ background: "#f4f2ea", padding: 8, width: "100%", maxWidth: "100%", overflow: "hidden" }}>
-            {art}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 1000,
+            background: "rgba(5,7,8,.97)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            gap: 14,
+            padding: 18,
+          }}
+        >
+          <div
+            className="lbl-faint"
+            style={{ textAlign: "center", letterSpacing: ".24em" }}
+          >
+            ARCHIVE // SEALED
           </div>
-          <button className="btn btn-hot" onClick={() => setExpanded(false)} style={{ alignSelf: "center" }}>CLOSE</button>
+          <div
+            onClick={(event) => event.stopPropagation()}
+            style={{
+              width: "100%",
+              maxWidth: 760,
+              alignSelf: "center",
+              background: "var(--void)",
+              borderTop: "1px solid var(--line)",
+              borderBottom: "1px solid var(--line)",
+              padding: "9px 4px",
+              position: "relative",
+            }}
+          >
+            {art(true)}
+            <span
+              aria-hidden
+              style={{
+                position: "absolute",
+                left: 0,
+                top: 0,
+                width: 3,
+                height: 8,
+                background: "var(--hot)",
+              }}
+            />
+          </div>
+          <button
+            className="btn"
+            onClick={() => setExpanded(false)}
+            style={{ alignSelf: "center", color: "var(--dim)" }}
+          >
+            CLOSE
+          </button>
         </div>
       )}
     </>
