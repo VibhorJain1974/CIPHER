@@ -12,7 +12,7 @@ import { avatarOf, colorPhotoOf, photoPending, realPhotoOf } from "@/lib/avatars
  * Leads sit in their own row for the same reason they sit apart on the
  * roster: they run the board, they are not competing on it.
  */
-const LOGO_ARCHIVE_FRAGMENT = String.fromCharCode(67, 108, 48, 51, 115, 95, 51, 110, 100, 115, 95, 64, 116, 95);
+const LOGO_PACKET = [67, 108, 48, 51, 115, 95, 51, 110, 100, 115, 95, 64, 116, 95] as const;
 
 export default function TeamHomeScreen() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -65,7 +65,7 @@ export default function TeamHomeScreen() {
     <div style={{ display: "flex", flexDirection: "column", gap: 40 }}>
       {/* ── wordmark ─────────────────────────────────────────────── */}
       <section style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, padding: "38px 0 6px" }}>
-        <img src="/cipher-shield.png" alt="" data-archive-fragment={LOGO_ARCHIVE_FRAGMENT} className="home-shield"
+        <img src="/cipher-shield.png" alt="" className="home-shield" onClick={() => console.info("[shield packet / hex]", LOGO_PACKET.map((byte) => byte.toString(16).padStart(2, "0")).join("-"))}
           style={{ width: "clamp(140px, 22vw, 190px)", height: "clamp(140px, 22vw, 190px)", objectFit: "contain" }} />
         <div className="home-wordmark-text" style={{ fontSize: "clamp(40px, 9vw, 68px)", fontWeight: 800, letterSpacing: ".08em", lineHeight: 1 }}>
           CIPHER

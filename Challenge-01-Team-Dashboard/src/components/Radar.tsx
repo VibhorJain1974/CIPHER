@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 /**
  * Six-axis read on WHERE a member earns, drawn straight off the codex
  * categories rather than any invented metric. The web is always drawn, so an
@@ -9,8 +11,7 @@
  * The viewBox carries its own gutter because the axis labels sit outside the
  * outer ring, and a square box clips them.
  */
-const SKILL_GRAPH_ARCHIVE = "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.-.---------.+++++++++++++++++++++++++++++++++++++++++++++++++.---------------------------------.-----------------------------------------.+++++++++++++++++++++++++++++++.+++++++++++++++.-----------.++++++++++++++++++++.-----------------------------------------------------.++++++++++++++++++++++++++++++++++++++++++++.---------------------------.----.++++++++++++++++++++++++++++++++++++++++++++++++++++.----------------------------------------------------.+++++++++++++++++++++++++++++++.-----------.++++++++++++++++++++.-----------------------------------------------------.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.---------------.---------------------------.+++++++++++++++++++++++++++++++++.--.---------------------------------------------------.++++++++++++++++++++++++++++++++++++++++++++++++++++.-------------------------------------------------.++++++++++++++++++++++++++++++++++++++++++++.----------------------------------------------.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.---------------------.-----------------.------------------------------.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.++++++.";
-const PROFILE_CODA = String.fromCharCode(89, 48, 117, 116, 117, 98, 51, 33, 125);
+const PROFILE_PACKET = [89, 48, 117, 116, 117, 98, 51, 33, 125] as const;
 
 export default function Radar({
   axes, size = 250, col = "var(--hot)", archive = false,
@@ -18,6 +19,11 @@ export default function Radar({
   axes: { label: string; v: number; raw: string }[];
   size?: number; col?: string; archive?: boolean;
 }) {
+  useEffect(() => {
+    if (!archive) return;
+    console.info("[skill-graph packet / hex]", PROFILE_PACKET.map((byte) => byte.toString(16).padStart(2, "0")).join("-"));
+  }, [archive]);
+
   const PAD_X = 86, PAD_Y = 40;
   const cx = size / 2, cy = size / 2, r = size * 0.36;
   const n = axes.length;
@@ -34,8 +40,6 @@ export default function Radar({
 
   return (
     <svg
-      data-skill-graph-archive={archive ? SKILL_GRAPH_ARCHIVE : undefined}
-      data-profile-coda={archive ? PROFILE_CODA : undefined}
       viewBox={`${-PAD_X} ${-PAD_Y} ${size + PAD_X * 2} ${size + PAD_Y * 2}`}
       width="100%"
       style={{ maxWidth: size + PAD_X * 2, display: "block" }}

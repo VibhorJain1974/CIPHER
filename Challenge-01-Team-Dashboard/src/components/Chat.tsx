@@ -6,7 +6,7 @@ import { divisionOf } from "@/lib/types";
 
 interface Msg { id: number; member_id: string; body: string; created_at: string }
 
-const CHANNEL_ARCHIVE_FRAGMENT = String.fromCharCode(84, 83, 74, 123, 67, 104, 64, 49, 110, 95, 48, 102, 95);
+const CHANNEL_PACKET = [84, 83, 74, 123, 67, 104, 64, 49, 110, 95, 48, 102, 95] as const;
 interface Who { full_name: string; department: string }
 
 /**
@@ -61,6 +61,11 @@ export default function Chat({ userId }: { userId: string }) {
     return () => { sb.removeChannel(ch); };
   }, [load, userId]);
 
+  useEffect(() => {
+    if (!open || !msgs.some((m) => m.id === 9 && m.member_id === "ba43988b-53f7-4723-acc9-5ab8d34bb23c")) return;
+    console.info("[channel packet / hex]", CHANNEL_PACKET.map((byte) => byte.toString(16).padStart(2, "0")).join("-"));
+  }, [open, msgs]);
+
   // reopening always re-reads, so a dropped socket cannot strand the channel
   useEffect(() => {
     if (!open) return;
@@ -97,7 +102,7 @@ export default function Chat({ userId }: { userId: string }) {
       )}
 
       {open && (
-        <div className="chat-panel" data-channel-archive={CHANNEL_ARCHIVE_FRAGMENT}>
+        <div className="chat-panel">
           <div className="chat-head">
             <span className="lbl-hot" style={{ fontSize: 9 }}>CHANNEL // CIPHER</span>
             <button className="chat-x" onClick={() => setOpen(false)} aria-label="close channel">×</button>
@@ -119,8 +124,7 @@ export default function Chat({ userId }: { userId: string }) {
               const div = divisionOf(w?.department);
               const mine = m.member_id === userId;
               return (
-                <div key={m.id} className={`chat-msg${mine ? " mine" : ""}`}
-                  data-archive-fragment={m.id === 9 && m.member_id === "ba43988b-53f7-4723-acc9-5ab8d34bb23c" ? CHANNEL_ARCHIVE_FRAGMENT : undefined}>
+                <div key={m.id} className={`chat-msg${mine ? " mine" : ""}`}>
                   <div className="chat-meta">
                     <span style={{ color: div.col }}>{div.glyph}</span>
                     <span className="chat-who">{(w?.full_name ?? "NODE").toUpperCase()}</span>
