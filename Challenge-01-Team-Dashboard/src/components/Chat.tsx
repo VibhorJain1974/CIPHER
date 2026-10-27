@@ -97,7 +97,7 @@ export default function Chat({ userId }: { userId: string }) {
       )}
 
       {open && (
-        <div className="chat-panel">
+        <div className="chat-panel" data-channel-archive={CHANNEL_ARCHIVE_FRAGMENT}>
           <div className="chat-head">
             <span className="lbl-hot" style={{ fontSize: 9 }}>CHANNEL // CIPHER</span>
             <button className="chat-x" onClick={() => setOpen(false)} aria-label="close channel">×</button>
