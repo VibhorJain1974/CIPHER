@@ -30,7 +30,7 @@ export default function ArchiveBarcode() {
     <svg
       role="img"
       aria-label="Sealed record"
-      viewBox={`0 0 ${width} 100`}
+      viewBox={large ? `0 0 ${width} 100` : `0 0 ${width} 22`}
       width={large ? width : "100%"}
       height={large ? 100 : 22}
       preserveAspectRatio={large ? "xMidYMid meet" : "none"}
@@ -47,9 +47,9 @@ export default function ArchiveBarcode() {
         <rect
           key={i}
           x={bar.x}
-          y={large ? 7 : 3}
+          y={large ? 7 : 2}
           width={bar.width}
-          height={large ? 76 : 17}
+          height={large ? 76 : 18}
           fill={large ? "var(--bone)" : (i % 13 === 0 ? "var(--ember)" : "var(--dimmer)")}
         />
       ))}
