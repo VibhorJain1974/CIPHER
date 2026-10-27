@@ -28,7 +28,8 @@ export default function ArchiveBarcode() {
   const { bars, width } = encode();
   const art = (
     <svg role="img" aria-label="Archive Code 128 barcode" viewBox={`0 0 ${width} 108`}
-      width={width} height="108" style={{ display: "block", maxWidth: "none", shapeRendering: "crispEdges" }}>
+      width="100%" height="108" preserveAspectRatio="none"
+      style={{ display: "block", width: "100%", height: 108, shapeRendering: "crispEdges" }}>
       <rect width={width} height="108" fill="#f4f2ea" />
       {bars.map((bar, i) => <rect key={i} x={bar.x} y="4" width={bar.width} height="76" fill="#111313" />)}
       <text x={width / 2} y="101" textAnchor="middle" fontFamily="monospace" fontSize="10" letterSpacing="2" fill="#111313">ARCHIVE // SCAN CODE 128</text>
@@ -36,7 +37,7 @@ export default function ArchiveBarcode() {
   );
   return (
     <>
-      <div style={{ maxWidth: "100%", overflowX: "auto", background: "#f4f2ea", padding: "6px 8px", border: "1px solid #b4b0a6" }}>
+      <div style={{ width: "100%", maxWidth: "100%", overflow: "hidden", background: "#f4f2ea", padding: "6px 4px", border: "1px solid #b4b0a6" }}>
         {art}
       </div>
       <button type="button" className="btn" onClick={() => setExpanded(true)}
@@ -49,7 +50,7 @@ export default function ArchiveBarcode() {
           style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(5,7,8,.94)", display: "flex", flexDirection: "column", justifyContent: "center", gap: 16, padding: 14 }}>
           <div className="lbl" style={{ color: "#f4f2ea", textAlign: "center" }}>ARCHIVE // CODE 128</div>
           <div onClick={(event) => event.stopPropagation()}
-            style={{ background: "#f4f2ea", padding: 8, maxWidth: "100%", overflowX: "auto" }}>
+            style={{ background: "#f4f2ea", padding: 8, width: "100%", maxWidth: "100%", overflow: "hidden" }}>
             {art}
           </div>
           <button className="btn btn-hot" onClick={() => setExpanded(false)} style={{ alignSelf: "center" }}>CLOSE</button>
