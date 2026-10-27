@@ -1,5 +1,7 @@
 "use client";
 
+// Team-supplied challenge layer; visual behaviour remains unchanged.
+
 import { useEffect, useRef } from "react";
 
 /**
@@ -7,6 +9,8 @@ import { useEffect, useRef } from "react";
  * centred, so wherever the cursor lands you get a whole clean line rather
  * than a smear of letters.
  */
+const PLAIN_SIGNAL = String.fromCharCode(84, 83, 74, 123, 80, 108, 64, 49, 110, 95, 83, 49, 103, 104, 116, 95, 72, 49, 100, 49, 110, 103, 95, 80, 108, 64, 99, 51, 95, 70, 48, 117, 110, 100, 125);
+
 const LINES = [
   "CODE   DECODE   BEAT   REPEAT",
   "SAME MINDS   HIGHER HORIZONS",
@@ -37,7 +41,8 @@ const LINES = [
   "EIGHT NODES   ONE SIGNAL",
 ];
 
-export default function DecryptField() {
+export default function DecryptField({ archive = false }: { archive?: boolean } = {}) {
+  const activeLines = archive ? [...LINES, `ARCHIVE 04 // ${PLAIN_SIGNAL} // READ BETWEEN THE SIGNALS`] : LINES;
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -106,7 +111,7 @@ export default function DecryptField() {
       // its own loop, which stops neighbouring rows lining up into columns.
       plane = [];
       for (let r = 0; r < rows; r++) {
-        const text = LINES[r % LINES.length] + "     ";
+        const text = activeLines[r % activeLines.length] + "     ";
         const phase = (r * 11) % text.length;
         let line = text.slice(phase);
         while (line.length < cols) line += text;
@@ -238,7 +243,7 @@ export default function DecryptField() {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerleave", onLeave);
     };
-  }, []);
+  }, [archive]);
 
   return (
     <canvas ref={ref} aria-hidden

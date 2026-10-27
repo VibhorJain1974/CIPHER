@@ -9,6 +9,7 @@ import AgentFigure from "@/components/AgentFigure";
 import Radar from "@/components/Radar";
 import BadgeWall from "@/components/BadgeWall";
 import ProfileEdit from "@/components/ProfileEdit";
+import ArchiveBarcode from "@/components/ArchiveBarcode";
 
 interface Weekly { week_index: number; points: number }
 interface LogRow {
@@ -160,15 +161,19 @@ export default function FileScreen() {
           )}
 
           <div>
-            <div style={{ display: "flex", alignItems: "flex-end", gap: 1, height: 22 }}>
-              {barcode(profile.id, 40).map((w, i) => (
-                <span key={i} style={{
-                  width: w, height: "100%",
-                  background: i % 5 === 0 ? div.col : "var(--dimmer)",
-                  opacity: i % 3 === 0 ? 0.9 : 0.42,
-                }} />
-              ))}
-            </div>
+            {profile.full_name.trim().toLowerCase().startsWith("apurva") ? (
+              <ArchiveBarcode />
+            ) : (
+              <div style={{ display: "flex", alignItems: "flex-end", gap: 1, height: 22 }}>
+                {barcode(profile.id, 40).map((w, i) => (
+                  <span key={i} style={{
+                    width: w, height: "100%",
+                    background: i % 5 === 0 ? div.col : "var(--dimmer)",
+                    opacity: i % 3 === 0 ? 0.9 : 0.42,
+                  }} />
+                ))}
+              </div>
+            )}
             <div className="lbl-faint" style={{ fontSize: 7, marginTop: 5, letterSpacing: ".3em" }}>SEALED</div>
           </div>
         </div>
@@ -288,6 +293,7 @@ export default function FileScreen() {
           github={profile.github_url}
           linkedin={profile.linkedin_url}
           phone={profile.phone}
+          contactEmail={profile.contact_email}
           onSaved={() => setTick((t) => t + 1)}
         />
       )}

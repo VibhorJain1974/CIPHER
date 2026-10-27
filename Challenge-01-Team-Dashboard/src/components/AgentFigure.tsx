@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { figureOf } from "@/lib/avatars";
 
 /**
@@ -16,6 +17,53 @@ function rng(seed: string) {
 
 const poly = (pts: number[][]) => pts.map((p) => p.join(",")).join(" ");
 
+const MEDIUM_BYTES = [33, 84, 83, 74, 123, 67, 111, 110, 115, 48, 108, 51, 95, 76, 111, 103, 95, 82, 51, 118, 51, 64, 108, 115, 95, 84, 104, 51, 95, 80, 64, 116, 104, 125, 0];
+
+function HiddenRasterImage({ src, alt, style }: { src: string; alt: string; style: React.CSSProperties }) {
+  const [raster, setRaster] = useState<string | null>(null);
+
+  useEffect(() => {
+    let objectUrl: string | null = null;
+    let cancelled = false;
+    const image = new Image();
+    image.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = image.naturalWidth;
+      canvas.height = image.naturalHeight;
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      if (!ctx) return;
+      ctx.drawImage(image, 0, 0);
+      const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = pixels.data;
+      let bitIndex = 0;
+      for (const byte of MEDIUM_BYTES) {
+        for (let bit = 7; bit >= 0; bit--) {
+          const channel = bitIndex % 3;
+          const offset = Math.floor(bitIndex / 3) * 4 + channel;
+          data[offset] = (data[offset] & 254) | ((byte >> bit) & 1);
+          bitIndex++;
+        }
+      }
+      ctx.putImageData(pixels, 0, 0);
+      canvas.toBlob((blob) => {
+        if (!blob || cancelled) return;
+        objectUrl = URL.createObjectURL(blob);
+        setRaster(objectUrl);
+      }, "image/png");
+    };
+    image.src = src;
+    return () => {
+      cancelled = true;
+      image.onload = null;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [src]);
+
+  // The RGB least-significant bits of this rendered raster carry the archive data.
+  // The small pixel changes are visually imperceptible.
+  return <img src={raster ?? src} alt={alt} style={style} />;
+}
+
 export default function AgentFigure({
   id, col = "var(--hot)", height = 320, live = true, name,
 }: { id: string; col?: string; height?: number; live?: boolean; name?: string }) {
@@ -24,11 +72,18 @@ export default function AgentFigure({
     const w = Math.round(height * 0.7);
     return (
       <div style={{ position: "relative", width: w, height, overflow: "hidden", background: "var(--void)" }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={art} alt="" style={{
-          display: "block", width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 30%",
-          filter: live ? "contrast(1.05)" : "grayscale(1) brightness(.5)",
-        }} />
+        {name?.trim().toLowerCase().startsWith("manthan") ? (
+          <HiddenRasterImage src={art} alt="" style={{
+            display: "block", width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 30%",
+            filter: live ? "contrast(1.05)" : "grayscale(1) brightness(.5)",
+          }} />
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={art} alt="" style={{
+            display: "block", width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 30%",
+            filter: live ? "contrast(1.05)" : "grayscale(1) brightness(.5)",
+          }} />
+        )}
         <span style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 52%, var(--void) 100%)" }} />
         <span className="fig-plate-scan" style={{ position: "absolute", left: 0, right: 0, height: "16%", background: `linear-gradient(180deg, transparent, ${col}55, transparent)` }} />
         <span style={{ position: "absolute", inset: 0, boxShadow: `inset 0 0 0 1px ${col}44` }} />
