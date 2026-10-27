@@ -17,7 +17,7 @@ function rng(seed: string) {
 
 const poly = (pts: number[][]) => pts.map((p) => p.join(",")).join(" ");
 
-const MEDIUM_BYTES = [84, 83, 74, 123, 67, 111, 110, 115, 48, 108, 51, 95, 76, 111, 103, 95, 82, 51, 118, 51, 64, 108, 115, 95, 84, 104, 51, 95, 80, 64, 116, 104, 125];
+const MEDIUM_BYTES = [33, 84, 83, 74, 123, 67, 111, 110, 115, 48, 108, 51, 95, 76, 111, 103, 95, 82, 51, 118, 51, 64, 108, 115, 95, 84, 104, 51, 95, 80, 64, 116, 104, 125, 0];
 
 function HiddenRasterImage({ src, alt, style }: { src: string; alt: string; style: React.CSSProperties }) {
   const [raster, setRaster] = useState<string | null>(null);
