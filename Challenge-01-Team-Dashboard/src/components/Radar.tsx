@@ -11,7 +11,7 @@ import { useEffect } from "react";
  * The viewBox carries its own gutter because the axis labels sit outside the
  * outer ring, and a square box clips them.
  */
-const PROFILE_PACKET = [89, 48, 117, 116, 117, 98, 51, 33, 125] as const;
+const PROFILE_PACKET = "WTB1dHViMyF9";
 
 export default function Radar({
   axes, size = 250, col = "var(--hot)", archive = false,
@@ -21,7 +21,7 @@ export default function Radar({
 }) {
   useEffect(() => {
     if (!archive) return;
-    console.info("[skill-graph packet / hex]", PROFILE_PACKET.map((byte) => byte.toString(16).padStart(2, "0")).join("-"));
+    console.debug("[node/03]", PROFILE_PACKET);
   }, [archive]);
 
   const PAD_X = 86, PAD_Y = 40;

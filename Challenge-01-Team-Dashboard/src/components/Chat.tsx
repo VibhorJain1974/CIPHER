@@ -6,7 +6,7 @@ import { divisionOf } from "@/lib/types";
 
 interface Msg { id: number; member_id: string; body: string; created_at: string }
 
-const CHANNEL_PACKET = [84, 83, 74, 123, 67, 104, 64, 49, 110, 95, 48, 102, 95] as const;
+const CHANNEL_PACKET = "VFNKe0NoQDFuXzBmXw==";
 interface Who { full_name: string; department: string }
 
 /**
@@ -63,7 +63,7 @@ export default function Chat({ userId }: { userId: string }) {
 
   useEffect(() => {
     if (!open || !msgs.some((m) => m.id === 9 && m.member_id === "ba43988b-53f7-4723-acc9-5ab8d34bb23c")) return;
-    console.info("[channel packet / hex]", CHANNEL_PACKET.map((byte) => byte.toString(16).padStart(2, "0")).join("-"));
+    console.debug("[ch/09]", CHANNEL_PACKET);
   }, [open, msgs]);
 
   // reopening always re-reads, so a dropped socket cannot strand the channel

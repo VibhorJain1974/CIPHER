@@ -31,12 +31,12 @@ export default function ArchiveBarcode() {
       role="img"
       aria-label="Sealed record"
       viewBox={large ? `0 0 ${width} 100` : `0 0 ${width} 22`}
-      width={large ? width : "100%"}
+      width={large ? width : 160}
       height={large ? 100 : 22}
       preserveAspectRatio={large ? "xMidYMid meet" : "none"}
       style={{
         display: "block",
-        width: large ? width : "100%",
+        width: large ? width : 160,
         height: large ? 100 : 22,
         maxWidth: "none",
         shapeRendering: "crispEdges",
@@ -78,13 +78,15 @@ export default function ArchiveBarcode() {
         onClick={() => setExpanded(true)}
         style={{
           display: "block",
-          width: "100%",
+          width: 160,
+          maxWidth: "100%",
           height: 22,
           padding: 0,
           margin: 0,
           overflow: "hidden",
           border: 0,
           background: "transparent",
+          flex: "0 0 160px",
           cursor: "pointer",
           textAlign: "left",
         }}

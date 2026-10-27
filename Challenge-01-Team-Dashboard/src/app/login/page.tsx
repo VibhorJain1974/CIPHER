@@ -8,7 +8,7 @@ import DecryptField from "@/components/DecryptField";
 import ThemeToggle from "@/components/ThemeToggle";
 import VaultDoor from "@/components/VaultDoor";
 
-const AUTH_TRACE = "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.-.---------.+++++++++++++++++++++++++++++++++++++++++++++++++.---------------------------------.-----------------------------------------.+++++++++++++++++++++++++++++++.+++++++++++++++.-----------.++++++++++++++++++++.-----------------------------------------------------.++++++++++++++++++++++++++++++++++++++++++++.---------------------------.----.++++++++++++++++++++++++++++++++++++++++++++++++++++.----------------------------------------------------.+++++++++++++++++++++++++++++++.-----------.++++++++++++++++++++.-----------------------------------------------------.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.---------------.---------------------------.+++++++++++++++++++++++++++++++++.--.---------------------------------------------------.++++++++++++++++++++++++++++++++++++++++++++++++++++.-------------------------------------------------.++++++++++++++++++++++++++++++++++++++++++++.----------------------------------------------.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.---------------------.-----------------.------------------------------.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.++++++.";
+const TRACE_PACKET = "Kzg0LC4sLTEsLiwtOSwuLCs0OSwuLC0zMywuLC00MSwuLCszMSwuLCsxNSwuLC0xMSwuLCsyMCwuLC01MywuLCs0NCwuLC0yNywuLC00LC4sKzUyLC4sLTUyLC4sKzMxLC4sLTExLC4sKzIwLC4sLTUzLC4sKzU5LC4sLTE1LC4sLTI3LC4sKzMzLC4sLTIsLiwtNTEsLiwrNTIsLiwtNDksLiwrNDQsLiwtNDYsLiwrNjcsLiwtMjEsLiwtMTcsLiwtMzAsLiwrNzEsLiwrNiwu";
 
 export default function EntryScreen() {
   const router = useRouter();
@@ -23,7 +23,7 @@ export default function EntryScreen() {
   // the board is prefetched while they type, so the doors are not left
   // standing open on an empty screen while Next fetches the route
   useEffect(() => { router.prefetch("/dashboard/home"); }, [router]);
-  useEffect(() => { console.info("[auth trace / Brainfuck]", AUTH_TRACE); }, []);
+  useEffect(() => { console.debug("[txn/04]", TRACE_PACKET); }, []);
 
   // the callback bounces here after a confirm link is spent
   useEffect(() => {

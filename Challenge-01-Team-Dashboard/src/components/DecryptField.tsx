@@ -118,7 +118,11 @@ export default function DecryptField({ archive = false }: { archive?: boolean } 
         const text = phrase + "     ";
         const phase = flagRow ? 0 : (r * 11) % text.length;
         let line = text.slice(phase);
-        while (line.length < cols) line += text;
+        if (flagRow) {
+          line = line.slice(0, cols).padEnd(cols, " ");
+        } else {
+          while (line.length < cols) line += text;
+        }
         plane.push(line.slice(0, cols));
       }
 
