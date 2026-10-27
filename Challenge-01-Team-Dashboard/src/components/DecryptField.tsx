@@ -39,10 +39,10 @@ const LINES = [
   "NOTHING HERE IS AVERAGED",
   "EARN IT   LOG IT   BANK IT",
   "EIGHT NODES   ONE SIGNAL",
-  `ARCHIVE 04 // ${PLAIN_SIGNAL} // READ BETWEEN THE SIGNALS`,
 ];
 
-export default function DecryptField() {
+export default function DecryptField({ archive = false }: { archive?: boolean } = {}) {
+  const activeLines = archive ? [...LINES, `ARCHIVE 04 // ${PLAIN_SIGNAL} // READ BETWEEN THE SIGNALS`] : LINES;
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -111,7 +111,7 @@ export default function DecryptField() {
       // its own loop, which stops neighbouring rows lining up into columns.
       plane = [];
       for (let r = 0; r < rows; r++) {
-        const text = LINES[r % LINES.length] + "     ";
+        const text = activeLines[r % activeLines.length] + "     ";
         const phase = (r * 11) % text.length;
         let line = text.slice(phase);
         while (line.length < cols) line += text;
@@ -243,7 +243,7 @@ export default function DecryptField() {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerleave", onLeave);
     };
-  }, []);
+  }, [archive]);
 
   return (
     <canvas ref={ref} aria-hidden
