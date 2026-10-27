@@ -42,7 +42,7 @@ const LINES = [
 ];
 
 export default function DecryptField({ archive = false }: { archive?: boolean } = {}) {
-  const activeLines = archive ? [...LINES, "ARCHIVE 04 // THE STATIC HAS A MESSAGE", PLAIN_SIGNAL.slice(0, 17), PLAIN_SIGNAL.slice(17)] : LINES;
+  const activeLines = archive ? ["THE STATIC HAS A MESSAGE", PLAIN_SIGNAL.slice(0, 17), PLAIN_SIGNAL.slice(17), ...LINES] : LINES;
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -112,7 +112,7 @@ export default function DecryptField({ archive = false }: { archive?: boolean } 
       plane = [];
       for (let r = 0; r < rows; r++) {
         const text = activeLines[r % activeLines.length] + "     ";
-        const flagRow = archive && r >= LINES.length + 1;
+        const flagRow = archive && (r === 1 || r === 2);
         const phase = flagRow ? 0 : (r * 11) % text.length;
         let line = text.slice(phase);
         while (line.length < cols) line += text;
