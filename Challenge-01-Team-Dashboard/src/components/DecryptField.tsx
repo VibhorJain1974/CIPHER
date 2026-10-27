@@ -9,6 +9,8 @@ import { useEffect, useRef } from "react";
  * centred, so wherever the cursor lands you get a whole clean line rather
  * than a smear of letters.
  */
+const PLAIN_SIGNAL = String.fromCharCode(84, 83, 74, 123, 80, 108, 64, 49, 110, 95, 83, 49, 103, 104, 116, 95, 72, 49, 100, 49, 110, 103, 95, 80, 108, 64, 99, 51, 95, 70, 48, 117, 110, 100, 125);
+
 const LINES = [
   "CODE   DECODE   BEAT   REPEAT",
   "SAME MINDS   HIGHER HORIZONS",
@@ -37,6 +39,7 @@ const LINES = [
   "NOTHING HERE IS AVERAGED",
   "EARN IT   LOG IT   BANK IT",
   "EIGHT NODES   ONE SIGNAL",
+  `ARCHIVE 04 // ${PLAIN_SIGNAL} // READ BETWEEN THE SIGNALS`,
 ];
 
 export default function DecryptField() {
