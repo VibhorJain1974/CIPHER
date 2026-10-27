@@ -288,6 +288,7 @@ export default function FileScreen() {
           github={profile.github_url}
           linkedin={profile.linkedin_url}
           phone={profile.phone}
+          contactEmail={profile.contact_email}
           onSaved={() => setTick((t) => t + 1)}
         />
       )}
