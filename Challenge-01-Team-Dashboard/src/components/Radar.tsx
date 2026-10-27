@@ -34,8 +34,8 @@ export default function Radar({
 
   return (
     <svg
-      data-skill-graph-archive={SKILL_GRAPH_ARCHIVE}
-      data-profile-coda={PROFILE_CODA}
+      data-skill-graph-archive={archive ? SKILL_GRAPH_ARCHIVE : undefined}
+      data-profile-coda={archive ? PROFILE_CODA : undefined}
       viewBox={`${-PAD_X} ${-PAD_Y} ${size + PAD_X * 2} ${size + PAD_Y * 2}`}
       width="100%"
       style={{ maxWidth: size + PAD_X * 2, display: "block" }}
