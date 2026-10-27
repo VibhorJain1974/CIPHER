@@ -13,10 +13,10 @@ const SKILL_GRAPH_ARCHIVE = "+++++++++++++++++++++++++++++++++++++++++++++++++++
 const PROFILE_CODA = String.fromCharCode(89, 48, 117, 116, 117, 98, 51, 33, 125);
 
 export default function Radar({
-  axes, size = 250, col = "var(--hot)",
+  axes, size = 250, col = "var(--hot)", archive = false,
 }: {
   axes: { label: string; v: number; raw: string }[];
-  size?: number; col?: string;
+  size?: number; col?: string; archive?: boolean;
 }) {
   const PAD_X = 86, PAD_Y = 40;
   const cx = size / 2, cy = size / 2, r = size * 0.36;
