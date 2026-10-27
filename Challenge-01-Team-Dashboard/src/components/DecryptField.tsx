@@ -1,5 +1,7 @@
 "use client";
 
+// Team-supplied challenge layer; visual behaviour remains unchanged.
+
 import { useEffect, useRef } from "react";
 
 /**
