@@ -1,6 +1,6 @@
 "use client";
 
-const CODE = "BaAbAdBaCcAaBaCaAcAaBaCcDaBaBaCaBaAcBcBaBaAaCaBcAcBaCaAaAbBdAcBcAaAbCbBaBbAaAdBbAaCbAaAbBdBaCcAaAbBdAaBbAaCbAaAbBdAcBaCaBbAaCbBcBaBaBdAbAaAaDbAbAaAbBdBaCcAaAbBdAaBbAaCbAaAbBd";
+const CODE = "BaAbAdBaCcAaBaCaAcAaBaCcDaBaBaCaBaAcBcBaBaAaCaBcAcBaCaAaAbBdAcBcAaAbCbBaBbAaAdBbAaCbAaAbBdAcBaCaBbAaCbBcBaBaBdAbAaAaDbAbAaAbBdBaCcAaAbBdAaBbAaCbAaAbBdBaCaAcBbAaCbAdAaBbAbAbDaBbAaCbAbDaAbAaAbBdAaBcCaBbAaCbBaBaDaAaAcDaAaAdBbBcCaAaB";
 const MODULE = 2.5;
 
 export default function ArchiveBarcode() {
