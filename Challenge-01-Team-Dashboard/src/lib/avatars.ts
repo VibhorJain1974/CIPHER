@@ -51,7 +51,8 @@ export function avatarOf(id: string, name?: string): string | null {
 export function figureOf(id: string, name?: string): string | null {
   const slug = slugFor(id, name);
   if (!slug) return null;
-  return FULL.has(slug) ? `/avatars/${slug}-full.png` : `/avatars/${slug}.png`;
+  const separator = slug === "manthan" ? "_" : "-";
+  return FULL.has(slug) ? `/avatars/${slug}${separator}full.png` : `/avatars/${slug}.png`;
 }
 
 /**
